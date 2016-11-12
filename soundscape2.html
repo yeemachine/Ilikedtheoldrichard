@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+<head>
+	<title>The Yee Machine</title>
+	<link rel="stylesheet" media="screen" href="css/style.css">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<link rel="apple-touch-icon" sizes="180x180" href="img/favicons/apple-touch-icon.png">
+	<link rel="icon" type="image/png" href="img/favicons/favicon-32x32.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="img/favicons/favicon-16x16.png" sizes="16x16">
+	<link rel="manifest" href="img/favicons/manifest.json">
+	<link rel="mask-icon" href="img/favicons/safari-pinned-tab.svg" color="#5bbad5">
+	<link rel="shortcut icon" href="img/favicons/favicon.ico">
+	<meta name="msapplication-config" content="img/favicons/browserconfig.xml">
+	<meta name="theme-color" content="#ffffff">
+
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.3.0/css/font-awesome.min.css" />
+
+</head>
+
+<body>
+
+
+
+	<div class="start height-fix">
+		<div>
+			<div class="element">
+
+			</div>
+		</div>
+	</div>
+	<div id="container" class="disableSelection height-fix"></div>
+	<ul class='instrContainer' style="bottom:2%">
+		<li class='instructions'>'WASD' + Mouse to move
+			<br><i class="fa fa-headphones"></i> for best experience</li>
+
+
+	</ul>
+	<!-- <div class="gradient position-fix"></div> -->
+	<nav class="main-nav position-fix">
+		<ul class="iconcontainer">
+			<li>
+				<a>
+					<p style="font-size:10px">Monument<br>Sound</p>
+
+
+				<p style="font-size:8px;color:rgba(255,255,255,0.5)">Richard Yee</p>
+				</a>
+				<a>
+
+				</a>
+			</li>
+
+		</ul>
+	</nav>
+
+
+
+
+	<script src="build/three.js"></script>
+	<script src='material.js'></script>
+	<script src="js/controls/FirstPersonControls.js"></script>
+
+	<script src="js/Detector.js"></script>
+	<script src="js/SkyShader.js"></script>
+
+	<script src="js/libs/stats.min.js"></script>
+
+
+	<script src="js/libs/dat.gui.min.js"></script>
+	<script type='text/javascript' src='js/libs/Tween.js'></script>
+
+
+	<script src="https://code.jquery.com/jquery-latest.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.3.5/tabletop.min.js"></script>
+	<script src="https://cdn.rawgit.com/CooperUnion/javascript-learning/master/tabletop-simple.js"></script>
+	<script src="js/typed.js"></script>
+	<script src="js/imagesloaded.pkgd.min.js"></script>
+	<script src="js/masonry.pkgd.min.js"></script>
+	<script src="js/classie.js"></script>
+	<script>
+		$(document).ready(function() {
+			if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+				var h = $('.height-fix').height();
+				$('.height-fix').height(h);
+				$('.position-fix').offset({top:(h*.85),left:0})
+				// $('.position-fix').bottom(h*.15);
+
+			}
+		});
+	</script>
+
+
+	<script>
+		////Spreadsheet Config////
+		$(document).ready(function() {
+			//configure spreadsheet
+			var public_spreadsheet_url = 'https://docs.google.com/spreadsheets/d/17D2pdAaHixfjQ6s5uzu56iHB5oFG7jOFLqIaP_M9Ly8/pubhtml';
+			getSpreadsheetJSON(public_spreadsheet_url, function(response) {
+
+				$('html, body').css({
+    'overflow': 'hidden',
+    'height': '100%'
+		});
+				// $(window).on('beforeunload', function() {
+				// 	$(window).scrollTop(0);
+				// });
+
+
+
+
+				//////////////////////////////
+
+				////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////
+				//////////////REST OF THE CODE////////////////////////////
+
+
+				if (!Detector.webgl) Detector.addGetWebGLMessage();
+
+				var container;
+				var camera, controls, scene, renderer;
+				var sky, sunSphere;
+				var light, pointLight;
+
+				var mesh;
+				var material_sphere1, material_sphere2, material_sphere3, material_sphere4, material_sphere5, material_sphere6, material_sphere7, material_sphere8, material_sphere9, material_sphere10;
+
+				var analyser1, analyser2, analyser5, analyser6, analyser7, analyser8;
+
+				var clock = new THREE.Clock();
+				var axis = new THREE.Vector3(0,0,0)
+
+
+				init();
+				animate();
+
+				function initSky() {
+					// Add Sky Mesh
+					sky = new THREE.Sky();
+					scene.add(sky.mesh);
+					// Add Sun Helper
+					sunSphere = new THREE.Mesh(
+						new THREE.SphereBufferGeometry(20000, 16, 8),
+						new THREE.MeshBasicMaterial({
+							color: 0xffffff
+						})
+					);
+					sunSphere.position.y = -700000;
+					sunSphere.visible = false;
+					scene.add(sunSphere);
+					/// GUI
+
+					var lum = 0.1;
+					var target = 2;
+					var tween = new TWEEN.Tween(lum).to(target, 2000);
+
+					tween.onUpdate(function() {
+						sky.uniforms.luminance.value = lum
+					});
+
+					var effectController = {
+						turbidity: 10,
+						reileigh: 2,
+						mieCoefficient: 0.005,
+						mieDirectionalG: 0.8,
+						luminance: .8,
+						inclination: 0.49, // elevation / inclination
+						azimuth: 0.25, // Facing front,
+						sun: !true
+					};
+
+
+
+					var distance = 400000;
+
+					function guiChanged() {
+						var uniforms = sky.uniforms;
+						uniforms.turbidity.value = effectController.turbidity;
+						uniforms.reileigh.value = effectController.reileigh;
+						uniforms.luminance.value = effectController.luminance;
+						uniforms.mieCoefficient.value = effectController.mieCoefficient;
+						uniforms.mieDirectionalG.value = effectController.mieDirectionalG;
+						var theta = Math.PI * (effectController.inclination - 0.5);
+						var phi = 2 * Math.PI * (effectController.azimuth - 0.5);
+						sunSphere.position.x = distance * Math.cos(phi);
+						sunSphere.position.y = distance * Math.sin(phi) * Math.sin(theta);
+						sunSphere.position.z = distance * Math.sin(phi) * Math.cos(theta);
+						sunSphere.visible = effectController.sun;
+						sky.uniforms.sunPosition.value.copy(sunSphere.position);
+						renderer.render(scene, camera);
+					}
+
+					guiChanged();
+				}
+
+
+				function init() {
+
+					container = document.getElementById('container');
+
+					camera = new THREE.PerspectiveCamera(60, $(container).width() / $(container).height(), .1, 2000000);
+					camera.position.set(0, 100, 23000);
+
+
+
+					var listener = new THREE.AudioListener();
+					camera.add(listener);
+
+
+					scene = new THREE.Scene();
+
+
+
+
+
+
+
+					var sphere = new THREE.IcosahedronGeometry(170, 3);
+					var sphere2 = new THREE.IcosahedronGeometry(170, 4);
+
+					var objectMaterial1 = new THREE.MeshLambertMaterial({
+						morphTargets: true,
+						color: 0xffffff,
+						wireframe: true,
+						wireframeLinewidth: 2,
+						wireframeLinejoin: 'bevel',
+						// emissive: 0x000000
+					});
+					var objectMaterial2 = new THREE.MeshLambertMaterial({
+						morphTargets: true,
+						color: 0xffffff,
+						wireframe: true,
+						wireframeLinewidth: 2,
+						wireframeLinejoin: 'bevel',
+						// emissive: '#000000'
+					});
+					var objectMaterial3 = new THREE.MeshLambertMaterial({
+						morphTargets: true,
+						color: 0xffffff,
+						wireframe: true,
+						wireframeLinewidth: 2,
+						wireframeLinejoin: 'bevel',
+						// emissive: '#000000'
+					});
+					var objectMaterial4 = new THREE.MeshLambertMaterial({
+						morphTargets: true,
+						color: 0xffffff,
+						wireframe: true,
+						wireframeLinewidth: 2,
+						wireframeLinejoin: 'bevel',
+						// emissive: '#000000'
+					});
+					var objectMaterial5 = new THREE.MeshLambertMaterial({
+						morphTargets: true,
+						color: 0xffffff,
+						wireframe: true,
+						wireframeLinewidth: 2,
+						wireframeLinejoin: 'bevel',
+						// emissive: '#000000'
+					});
+					var objectMaterial6 = new THREE.MeshLambertMaterial({
+						morphTargets: true,
+						color: 0xffffff,
+						wireframe: true,
+						wireframeLinewidth: 2,
+						wireframeLinejoin: 'bevel',
+						// emissive: '#000000'
+					});
+					var objectMaterial7 = new THREE.MeshLambertMaterial({
+						morphTargets: true,
+						color: 0xffffff,
+						wireframe: true,
+						wireframeLinewidth: 2,
+						wireframeLinejoin: 'bevel',
+						// emissive: '#000000'
+					});
+					var objectMaterial6 = new THREE.MeshLambertMaterial({
+						morphTargets: true,
+						color: 0xffffff,
+						wireframe: true,
+						wireframeLinewidth: 2,
+						wireframeLinejoin: 'bevel',
+						// emissive: '#000000'
+					});
+					var objectMaterial8 = new THREE.MeshLambertMaterial({
+						morphTargets: true,
+						color: 0xffffff,
+						wireframe: true,
+						wireframeLinewidth: 2,
+						wireframeLinejoin: 'bevel',
+						// emissive: '#000000'
+					});
+					var objectMaterial9 = new THREE.MeshLambertMaterial({
+						morphTargets: true,
+						color: 0xffffff,
+						wireframe: true,
+						wireframeLinewidth: 2,
+						wireframeLinejoin: 'bevel',
+						// emissive: '#000000'
+					});
+					var objectMaterial10 = new THREE.MeshLambertMaterial({
+						morphTargets: true,
+						color: 0xffffff,
+						wireframe: true,
+						wireframeLinewidth: 2,
+						wireframeLinejoin: 'bevel',
+						// emissive: '#000000'
+					});
+					var objectMaterial11 = new THREE.MeshLambertMaterial({
+						morphTargets: true,
+						color: 0xffffff,
+						wireframe: true,
+						wireframeLinewidth: 2,
+						wireframeLinejoin: 'bevel',
+						// emissive: '#000000'
+					});
+					var objectMaterial12 = new THREE.MeshLambertMaterial({
+						morphTargets: true,
+						color: 0xffffff,
+						wireframe: true,
+						wireframeLinewidth: 2,
+						wireframeLinejoin: 'bevel',
+						// emissive: '#ffffff'
+					});
+					var objectMaterial13= new THREE.MeshLambertMaterial({
+						morphTargets: true,
+						color: 0xffffff,
+						wireframe: true,
+						wireframeLinewidth: 2,
+						wireframeLinejoin: 'bevel',
+						// emissive: '#ffffff'
+					});
+					var objectMaterial14 = new THREE.MeshLambertMaterial({
+						morphTargets: true,
+						color: 0xffffff,
+						wireframe: true,
+						wireframeLinewidth: 2,
+						wireframeLinejoin: 'bevel',
+						// emissive: '#ffffff'
+					});
+
+
+					material_sphere1 = objectMaterial1;
+					material_sphere2 = objectMaterial2;
+					material_sphere3 = objectMaterial3;
+					material_sphere4 = objectMaterial4;
+					material_sphere5 = objectMaterial5;
+					material_sphere6 = objectMaterial6;
+					material_sphere7 = objectMaterial7;
+					material_sphere8 = objectMaterial8;
+					material_sphere9 = objectMaterial9;
+					material_sphere10 = objectMaterial10;
+					material_sphere11 = objectMaterial11;
+					material_sphere12 = objectMaterial12;
+					material_sphere13 = objectMaterial13;
+					material_sphere14 = objectMaterial14;
+
+
+
+					// var lights;
+					// lights= new THREE.PointLight(  0xff0000, 2, 10000 );
+					//
+					//
+					// // lights.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xff0000 } ) ) );
+					//
+					// lights.position.set( 0, 0, 0 );
+					//
+					// scene.add( lights );
+
+
+					var pyramid = new THREE.Object3D();
+
+					// sound spheres
+					var layer1 = new THREE.Object3D();
+					var mx1 = -1865;
+					for (var i = 0; i < 10; i++) {
+						var mesh1 = new THREE.Mesh(sphere, material_sphere1);
+						mesh1.position.x = mx1;
+						mesh1.position.z = 0;
+						layer1.add(mesh1);
+						mx1 += 410;
+						var sound1 = new THREE.PositionalAudio(listener);
+						sound1.load(response[0].link);
+						sound1.setRefDistance(20);
+						sound1.autoplay = true;
+						sound1.setLoop(true);
+						mesh1.add(sound1);
+					}
+					var mz1 = -410;
+					for (var i = 0; i < 8; i++) {
+						var mesh1 = new THREE.Mesh(sphere, material_sphere1);
+						mesh1.position.x = -1865;
+						mesh1.position.z = mz1;
+						layer1.add(mesh1);
+						mz1 -= 410;
+						var sound1 = new THREE.PositionalAudio(listener);
+						sound1.load(response[0].link);
+						sound1.setRefDistance(20);
+						sound1.autoplay = true;
+						sound1.setLoop(true);
+						mesh1.add(sound1);
+					}
+					var mxx1 = -1865
+					for (var i = 0; i < 10; i++) {
+						var mesh1 = new THREE.Mesh(sphere, material_sphere1);
+						mesh1.position.x = mxx1;
+						mesh1.position.z = mz1;
+						layer1.add(mesh1);
+						mxx1 += 410;
+						var sound1 = new THREE.PositionalAudio(listener);
+						sound1.load(response[0].link);
+						sound1.setRefDistance(20);
+						sound1.autoplay = true;
+						sound1.setLoop(true);
+						mesh1.add(sound1);
+					}
+					mzz1 = -410
+					for (var i = 0; i < 8; i++) {
+						var mesh1 = new THREE.Mesh(sphere, material_sphere1);
+						mesh1.position.x = -1865 + (410*9);
+						mesh1.position.z = mzz1;
+						layer1.add(mesh1);
+						mzz1 -= 410;
+						var sound1 = new THREE.PositionalAudio(listener);
+						sound1.load(response[0].link);
+						sound1.setRefDistance(20);
+						sound1.autoplay = true;
+						sound1.setLoop(true);
+						mesh1.add(sound1);
+					}
+					layer1.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, 1845 ) );
+					var pivot1 = new THREE.Group();
+					pivot1.add(layer1)
+					pivot1.position.z= 0;
+					pivot1.position.y= 0;
+
+					pyramid.add(pivot1);
+
+					var layer2 = new THREE.Object3D();
+					var mx2 = -1660;
+					for (var i = 0; i < 9; i++) {
+						var mesh2 = new THREE.Mesh(sphere, material_sphere2);
+						mesh2.position.x = mx2;
+						mesh2.position.y = 410;
+						mesh2.position.z = -205;
+						layer2.add(mesh2);
+							mx2 += 410;
+						var sound2 = new THREE.PositionalAudio(listener);
+						sound2.load(response[1].link);
+						sound2.setRefDistance(20);
+						sound2.autoplay = true;
+						sound2.setLoop(true);
+						mesh2.add(sound2);
+					}
+					var mz2 = -625;
+					for (var i = 0; i < 7; i++) {
+						var mesh2 = new THREE.Mesh(sphere, material_sphere2);
+						mesh2.position.x = -1660;
+						mesh2.position.y = 410;
+						mesh2.position.z = mz2;
+						layer2.add(mesh2);
+							mz2 -= 410;
+						var sound2 = new THREE.PositionalAudio(listener);
+						sound2.load(response[1].link);
+						sound2.setRefDistance(20);
+						sound2.autoplay = true;
+						sound2.setLoop(true);
+						mesh2.add(sound2);
+					}
+					var mxx2 = -1660;
+					for (var i = 0; i < 9; i++) {
+						var mesh2 = new THREE.Mesh(sphere, material_sphere2);
+						mesh2.position.x = mxx2;
+						mesh2.position.y = 410;
+						mesh2.position.z = mz2;
+						layer2.add(mesh2);
+							mxx2 += 410;
+						var sound2 = new THREE.PositionalAudio(listener);
+						sound2.load(response[1].link);
+						sound2.setRefDistance(20);
+						sound2.autoplay = true;
+						sound2.setLoop(true);
+						mesh2.add(sound2);
+					}
+					var mzz2 = -625;
+					for (var i = 0; i < 7; i++) {
+						var mesh2 = new THREE.Mesh(sphere, material_sphere2);
+						mesh2.position.x = -1660 + (410*8);
+						mesh2.position.y = 410;
+						mesh2.position.z = mzz2;
+						layer2.add(mesh2);
+							mzz2 -= 410;
+						var sound2 = new THREE.PositionalAudio(listener);
+						sound2.load(response[1].link);
+						sound2.setRefDistance(20);
+						sound2.autoplay = true;
+						sound2.setLoop(true);
+						mesh2.add(sound2);
+					}
+					layer2.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, 1845 ) );
+					var pivot2 = new THREE.Group();
+					pivot2.add(layer2)
+					pivot2.position.z= 0;
+					pivot2.position.y= -410;
+
+					pyramid.add(pivot2);
+
+					//
+					var layer3 = new THREE.Object3D();
+					var mx3 = -1455;
+					for (var i = 0; i < 8; i++) {
+						var mesh3 = new THREE.Mesh(sphere, material_sphere3);
+						mesh3.position.x = mx3;
+						mesh3.position.y = 820;
+						mesh3.position.z = -410;
+						layer3.add(mesh3);
+						mx3 += 410;
+						var sound3 = new THREE.PositionalAudio(listener);
+						sound3.load(response[2].link);
+						sound3.setRefDistance(20);
+						sound3.autoplay = true;
+						sound3.setLoop(true);
+						mesh3.add(sound3);
+					}
+					var mz3=-820;
+					for (var i = 0; i < 6; i++) {
+						var mesh3 = new THREE.Mesh(sphere, material_sphere3);
+						mesh3.position.x = -1455;
+						mesh3.position.y = 820;
+						mesh3.position.z = mz3;
+						layer3.add(mesh3);
+						mz3 -= 410;
+						var sound3 = new THREE.PositionalAudio(listener);
+						sound3.load(response[2].link);
+						sound3.setRefDistance(20);
+						sound3.autoplay = true;
+						sound3.setLoop(true);
+						mesh3.add(sound3);
+					}
+					var mxx3=-1455;
+					for (var i = 0; i < 8; i++) {
+						var mesh3 = new THREE.Mesh(sphere, material_sphere3);
+						mesh3.position.x = mxx3;
+						mesh3.position.y = 820;
+						mesh3.position.z = mz3;
+						layer3.add(mesh3);
+						mxx3 += 410;
+						var sound3 = new THREE.PositionalAudio(listener);
+						sound3.load(response[2].link);
+						sound3.setRefDistance(20);
+						sound3.autoplay = true;
+						sound3.setLoop(true);
+						mesh3.add(sound3);
+					}
+					var mzz3=-820;
+					for (var i = 0; i < 6; i++) {
+						var mesh3 = new THREE.Mesh(sphere, material_sphere3);
+						mesh3.position.x = -1455 + (410*7);
+						mesh3.position.y = 820;
+						mesh3.position.z = mzz3;
+						layer3.add(mesh3);
+						mzz3 -= 410;
+						var sound3 = new THREE.PositionalAudio(listener);
+						sound3.load(response[2].link);
+						sound3.setRefDistance(20);
+						sound3.autoplay = true;
+						sound3.setLoop(true);
+						mesh3.add(sound3);
+					}
+					layer3.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, 1845 ) );
+					var pivot3 = new THREE.Group();
+					pivot3.add(layer3)
+					pivot3.position.z= 0;
+					pivot3.position.y= -820;
+
+					pyramid.add(pivot3);
+
+
+					///
+					var layer4 = new THREE.Object3D();
+					var mx4 = -1250;
+					for (var i = 0; i < 7; i++) {
+						var mesh4 = new THREE.Mesh(sphere, material_sphere4);
+						mesh4.position.x = mx4;
+						mesh4.position.y = 1230;
+						mesh4.position.z = -615;
+						layer4.add(mesh4);
+						mx4 += 410;
+						var sound4 = new THREE.PositionalAudio(listener);
+						sound4.load(response[3].link);
+						sound4.setRefDistance(20);
+						sound4.autoplay = true;
+						sound4.setLoop(true);
+						mesh4.add(sound4);
+					}
+					var mz4=-1025;
+					for (var i = 0; i < 5; i++) {
+						var mesh4 = new THREE.Mesh(sphere, material_sphere4);
+						mesh4.position.x = -1250;
+						mesh4.position.y = 1230;
+						mesh4.position.z = mz4;
+						layer4.add(mesh4);
+						mz4 -= 410;
+						var sound4 = new THREE.PositionalAudio(listener);
+						sound4.load(response[3].link);
+						sound4.setRefDistance(20);
+						sound4.autoplay = true;
+						sound4.setLoop(true);
+						mesh4.add(sound4);
+					}
+					var mxx4=-1250;
+					for (var i = 0; i < 7; i++) {
+						var mesh4 = new THREE.Mesh(sphere, material_sphere4);
+						mesh4.position.x = mxx4;
+						mesh4.position.y = 1230;
+						mesh4.position.z = mz4;
+						layer4.add(mesh4);
+						mxx4 += 410;
+						var sound4 = new THREE.PositionalAudio(listener);
+						sound4.load(response[3].link);
+						sound4.setRefDistance(20);
+						sound4.autoplay = true;
+						sound4.setLoop(true);
+						mesh4.add(sound4);
+					}
+					var mzz4=-1025;
+					for (var i = 0; i < 5; i++) {
+						var mesh4 = new THREE.Mesh(sphere, material_sphere4);
+						mesh4.position.x = -1250 + (410*6);
+						mesh4.position.y = 1230;
+						mesh4.position.z = mzz4;
+						layer4.add(mesh4);
+						mzz4 -= 410;
+						var sound4 = new THREE.PositionalAudio(listener);
+						sound4.load(response[3].link);
+						sound4.setRefDistance(20);
+						sound4.autoplay = true;
+						sound4.setLoop(true);
+						mesh4.add(sound4);
+					}
+					layer4.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, 1845 ) );
+					var pivot4 = new THREE.Group();
+					pivot4.add(layer4)
+					pivot4.position.z= 0;
+					pivot4.position.y= -1230;
+
+					pyramid.add(pivot4);
+
+					///
+						var layer5 = new THREE.Object3D();
+					var mx5 = -1045;
+					for (var i = 0; i < 6; i++) {
+						var mesh5 = new THREE.Mesh(sphere, material_sphere5);
+						mesh5.position.x = mx5;
+						mesh5.position.y = 1640;
+						mesh5.position.z = -820;
+						layer5.add(mesh5);
+						mx5 += 410;
+						var sound5 = new THREE.PositionalAudio(listener);
+						sound5.load(response[4].link);
+						sound5.setRefDistance(20);
+						sound5.autoplay = true;
+						sound5.setLoop(true);
+						mesh5.add(sound5);
+					}
+					var mz5=-1230;
+					for (var i = 0; i < 4; i++) {
+						var mesh5 = new THREE.Mesh(sphere, material_sphere5);
+						mesh5.position.x = -1045;
+						mesh5.position.y = 1640;
+						mesh5.position.z = mz5;
+						layer5.add(mesh5);
+						mz5 -= 410;
+						var sound5 = new THREE.PositionalAudio(listener);
+						sound5.load(response[4].link);
+						sound5.setRefDistance(20);
+						sound5.autoplay = true;
+						sound5.setLoop(true);
+						mesh5.add(sound5);
+					}
+					var mxx5=-1045;
+					for (var i = 0; i < 6; i++) {
+						var mesh5 = new THREE.Mesh(sphere, material_sphere5);
+						mesh5.position.x = mxx5;
+						mesh5.position.y = 1640;
+						mesh5.position.z = mz5;
+						layer5.add(mesh5);
+						mxx5 += 410;
+						var sound5 = new THREE.PositionalAudio(listener);
+						sound5.load(response[4].link);
+						sound5.setRefDistance(20);
+						sound5.autoplay = true;
+						sound5.setLoop(true);
+						mesh5.add(sound5);
+					}
+					var mzz5=-1230;
+					for (var i = 0; i < 4; i++) {
+						var mesh5 = new THREE.Mesh(sphere, material_sphere5);
+						mesh5.position.x = -1045 + (410*5);
+						mesh5.position.y = 1640;
+						mesh5.position.z = mzz5;
+						layer5.add(mesh5);
+						mzz5 -= 410;
+						var sound5 = new THREE.PositionalAudio(listener);
+						sound5.load(response[4].link);
+						sound5.setRefDistance(20);
+						sound5.autoplay = true;
+						sound5.setLoop(true);
+						mesh5.add(sound5);
+					}
+					layer5.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, 1845 ) );
+					var pivot5 = new THREE.Group();
+					pivot5.add(layer5)
+					pivot5.position.z= 0;
+					pivot5.position.y= -1640;
+
+					pyramid.add(pivot5);
+
+					///
+					var layer6 = new THREE.Object3D();
+					var mx6 = -840;
+					for (var i = 0; i < 5; i++) {
+						var mesh6 = new THREE.Mesh(sphere, material_sphere6);
+						mesh6.position.x = mx6;
+						mesh6.position.y = 2050;
+						mesh6.position.z = -1025;
+						layer6.add(mesh6);
+						mx6 += 410;
+						var sound6 = new THREE.PositionalAudio(listener);
+						sound6.load(response[5].link);
+						sound6.setRefDistance(20);
+						sound6.autoplay = true;
+						sound6.setLoop(true);
+						mesh6.add(sound6);
+					}
+					var mz6 = -1435;
+					for (var i = 0; i < 3; i++) {
+						var mesh6 = new THREE.Mesh(sphere, material_sphere6);
+						mesh6.position.x = -840;
+						mesh6.position.y = 2050;
+						mesh6.position.z = mz6;
+						layer6.add(mesh6);
+						mz6 -= 410;
+						var sound6 = new THREE.PositionalAudio(listener);
+						sound6.load(response[5].link);
+						sound6.setRefDistance(20);
+						sound6.autoplay = true;
+						sound6.setLoop(true);
+						mesh6.add(sound6);
+					}
+					var mxx6 = -840;
+					for (var i = 0; i < 5; i++) {
+						var mesh6 = new THREE.Mesh(sphere, material_sphere6);
+						mesh6.position.x = mxx6;
+						mesh6.position.y = 2050;
+						mesh6.position.z = mz6;
+						layer6.add(mesh6);
+						mxx6 += 410;
+						var sound6 = new THREE.PositionalAudio(listener);
+						sound6.load(response[5].link);
+						sound6.setRefDistance(20);
+						sound6.autoplay = true;
+						sound6.setLoop(true);
+						mesh6.add(sound6);
+					}
+					var mzz6 = -1435;
+					for (var i = 0; i < 3; i++) {
+						var mesh6 = new THREE.Mesh(sphere, material_sphere6);
+						mesh6.position.x = -840 + (410*4);
+						mesh6.position.y = 2050;
+						mesh6.position.z = mzz6;
+						layer6.add(mesh6);
+						mzz6 -= 410;
+						var sound6 = new THREE.PositionalAudio(listener);
+						sound6.load(response[5].link);
+						sound6.setRefDistance(20);
+						sound6.autoplay = true;
+						sound6.setLoop(true);
+						mesh6.add(sound6);
+					}
+					layer6.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, 1845 ) );
+
+					var pivot6 = new THREE.Group();
+					pivot6.add(layer6);
+					pivot6.position.z= 0;
+					pivot6.position.y= -2050;
+					pyramid.add(pivot6);
+
+
+					var layer7 = new THREE.Object3D();
+					var mx7 = -635;
+					for (var i = 0; i < 4; i++) {
+						var mesh7 = new THREE.Mesh(sphere, material_sphere7);
+						mesh7.position.x = mx7;
+						mesh7.position.y = 2460;
+						mesh7.position.z = -1230;
+						layer7.add(mesh7);
+						mx7 += 410;
+						var sound7 = new THREE.PositionalAudio(listener);
+						sound7.load(response[5].link);
+						sound7.setRefDistance(20);
+						sound7.autoplay = true;
+						sound7.setLoop(true);
+						mesh7.add(sound7);
+					}
+					var mz7 = -1640;
+					for (var i = 0; i < 2; i++) {
+						var mesh7 = new THREE.Mesh(sphere, material_sphere7);
+						mesh7.position.x = -635;
+						mesh7.position.y = 2460;
+						mesh7.position.z = mz7;
+						layer7.add(mesh7);
+						mz7 -= 410;
+						var sound7 = new THREE.PositionalAudio(listener);
+						sound7.load(response[5].link);
+						sound7.setRefDistance(20);
+						sound7.autoplay = true;
+						sound7.setLoop(true);
+						mesh7.add(sound7);
+					}
+					var mxx7 = -635;
+					for (var i = 0; i < 4; i++) {
+						var mesh7 = new THREE.Mesh(sphere, material_sphere7);
+						mesh7.position.x = mxx7;
+						mesh7.position.y = 2460;
+						mesh7.position.z = mz7;
+						layer7.add(mesh7);
+						mxx7 += 410;
+						var sound7 = new THREE.PositionalAudio(listener);
+						sound7.load(response[5].link);
+						sound7.setRefDistance(20);
+						sound7.autoplay = true;
+						sound7.setLoop(true);
+						mesh7.add(sound7);
+					}
+					var mzz7 = -1640;
+					for (var i = 0; i < 2; i++) {
+						var mesh7 = new THREE.Mesh(sphere, material_sphere7);
+						mesh7.position.x = -635 + (410*3);
+						mesh7.position.y = 2460;
+						mesh7.position.z = mzz7;
+						layer7.add(mesh7);
+						mzz7 -= 410;
+						var sound7 = new THREE.PositionalAudio(listener);
+						sound7.load(response[5].link);
+						sound7.setRefDistance(20);
+						sound7.autoplay = true;
+						sound7.setLoop(true);
+						mesh7.add(sound7);
+					}
+					layer7.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, 1845 ) );
+
+					var pivot7 = new THREE.Group();
+					pivot7.add(layer7);
+					pivot7.position.z= 0;
+					pivot7.position.y= -2460;
+					pyramid.add(pivot7);
+
+////////////////
+
+					var layer8 = new THREE.Object3D();
+					var mx8 = -430;
+					for (var i = 0; i < 3; i++) {
+						var mesh8 = new THREE.Mesh(sphere, material_sphere8);
+						mesh8.position.x = mx8;
+						mesh8.position.y = 2870;
+						mesh8.position.z = -1435;
+						layer8.add(mesh8);
+						mx8 += 410;
+						var sound8 = new THREE.PositionalAudio(listener);
+						sound8.load(response[5].link);
+						sound8.setRefDistance(20);
+						sound8.autoplay = true;
+						sound8.setLoop(true);
+						mesh8.add(sound8);
+					}
+					var mz8 = -1845;
+					for (var i = 0; i < 1; i++) {
+						var mesh8 = new THREE.Mesh(sphere, material_sphere8);
+						mesh8.position.x = -430;
+						mesh8.position.y = 2870;
+						mesh8.position.z = mz8;
+						layer8.add(mesh8);
+						mz8 -= 410;
+						var sound8 = new THREE.PositionalAudio(listener);
+						sound8.load(response[5].link);
+						sound8.setRefDistance(20);
+						sound8.autoplay = true;
+						sound8.setLoop(true);
+						mesh8.add(sound8);
+					}
+					var mxx8 = -430;
+					for (var i = 0; i < 3; i++) {
+						var mesh8 = new THREE.Mesh(sphere, material_sphere8);
+						mesh8.position.x = mxx8;
+						mesh8.position.y = 2870;
+						mesh8.position.z = mz8;
+						layer8.add(mesh8);
+						mxx8 += 410;
+						var sound8 = new THREE.PositionalAudio(listener);
+						sound8.load(response[5].link);
+						sound8.setRefDistance(20);
+						sound8.autoplay = true;
+						sound8.setLoop(true);
+						mesh8.add(sound8);
+					}
+					var mzz8 = -1845;
+					for (var i = 0; i < 1; i++) {
+						var mesh8 = new THREE.Mesh(sphere, material_sphere8);
+						mesh8.position.x = -430 + (410*2);
+						mesh8.position.y = 2870;
+						mesh8.position.z = mzz8;
+						layer8.add(mesh8);
+						mzz8 -= 410;
+						var sound8 = new THREE.PositionalAudio(listener);
+						sound8.load(response[5].link);
+						sound8.setRefDistance(20);
+						sound8.autoplay = true;
+						sound8.setLoop(true);
+						mesh8.add(sound8);
+					}
+					layer8.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, 1845 ) );
+
+					var pivot8 = new THREE.Group();
+					pivot8.add(layer8);
+					pivot8.position.z= 0;
+					pivot8.position.y= -2870;
+					pyramid.add(pivot8);
+
+
+					var layer9 = new THREE.Object3D();
+					var mx9 = -225;
+					for (var i = 0; i < 2; i++) {
+						var mesh9 = new THREE.Mesh(sphere, material_sphere9);
+						mesh9.position.x = mx9;
+						mesh9.position.y = 3280;
+						mesh9.position.z = -1640;
+						layer9.add(mesh9);
+						mx9 += 410;
+						var sound9 = new THREE.PositionalAudio(listener);
+						sound9.load(response[5].link);
+						sound9.setRefDistance(20);
+						sound9.autoplay = true;
+						sound9.setLoop(true);
+						mesh9.add(sound9);
+					}
+
+					var mxx9 = -225;
+					for (var i = 0; i < 2; i++) {
+						var mesh9 = new THREE.Mesh(sphere, material_sphere9);
+						mesh9.position.x = mxx9;
+						mesh9.position.y = 3280;
+						mesh9.position.z = -2050;
+						layer9.add(mesh9);
+						mxx9 += 410;
+						var sound9 = new THREE.PositionalAudio(listener);
+						sound9.load(response[5].link);
+						sound9.setRefDistance(20);
+						sound9.autoplay = true;
+						sound9.setLoop(true);
+						mesh9.add(sound9);
+					}
+
+					layer9.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, 1845 ) );
+
+					var pivot9 = new THREE.Group();
+					pivot9.add(layer9);
+					pivot9.position.z= 0;
+					pivot9.position.y= -3280;
+					pyramid.add(pivot9);
+
+					var mesh10 = new THREE.Mesh(sphere, material_sphere10);
+					mesh10.position.x = -20;
+					mesh10.position.y = 0;
+					mesh10.position.z = 0;
+					pyramid.add(mesh10);
+
+					pyramid.scale.set( 3, 3, 3 );
+					pyramid.rotation.x = -(Math.PI/2)
+					scene.add(pyramid);
+
+
+
+
+
+
+
+					var mesh11 = new THREE.Mesh(sphere2, material_sphere11);
+					mesh11.position.x = 0;
+					mesh11.position.y = 100;
+					mesh11.position.z = 20000;
+					scene.add(mesh11);
+
+					// var mesh12 = new THREE.Mesh(sphere, material_sphere12);
+					// mesh12.position.x = 0;
+					// mesh12.position.y = 100;
+					// mesh12.position.z = -20000;
+					// scene.add(mesh12);
+					//
+					// var mesh13 = new THREE.Mesh(sphere, material_sphere13);
+					// mesh13.position.x = -20000;
+					// mesh13.position.y = 100;
+					// mesh13.position.z = 0;
+					// scene.add(mesh13);
+					//
+					// var mesh14 = new THREE.Mesh(sphere, material_sphere14);
+					// mesh14.position.x = 20000;
+					// mesh14.position.y = 100;
+					// mesh14.position.z = 0;
+					// scene.add(mesh14);
+
+
+
+
+
+				generateMorphTargets( mesh10, sphere );
+				generateMorphTargets( mesh11, sphere2 );
+				// updateMorphs(mesh14, material_sphere14);
+				// updateMorphs(mesh13, material_sphere13);
+				// updateMorphs(mesh12, material_sphere12);
+				updateMorphs(mesh11, material_sphere11);
+				updateMorphs(mesh10, material_sphere10);
+				updateMorphs(mesh9, material_sphere9);
+				updateMorphs(mesh8, material_sphere8);
+				updateMorphs(mesh7, material_sphere7);
+				updateMorphs(mesh6, material_sphere6);
+				updateMorphs(mesh5, material_sphere5);
+				updateMorphs(mesh4, material_sphere4);
+				updateMorphs(mesh3, material_sphere3);
+				updateMorphs(mesh2, material_sphere2);
+				updateMorphs(mesh1, material_sphere1);
+
+
+					// analysers
+
+					analyser1 = new THREE.AudioAnalyser(sound1, 32);
+					analyser2 = new THREE.AudioAnalyser(sound2, 32);
+					analyser3 = new THREE.AudioAnalyser(sound3, 32);
+					analyser4 = new THREE.AudioAnalyser(sound4, 32);
+					analyser5 = new THREE.AudioAnalyser(sound5, 32);
+					analyser6 = new THREE.AudioAnalyser(sound6, 32);
+					analyser7 = new THREE.AudioAnalyser(sound7, 32);
+					analyser8 = new THREE.AudioAnalyser(sound8, 32);
+					analyser9 = new THREE.AudioAnalyser(sound8, 32);
+
+
+					// global ambient audio
+
+					var sound0 = new THREE.Audio(listener);
+					sound0.load(response[7].link);
+					sound0.autoplay = true;
+					sound0.setLoop(true);
+					sound0.setVolume(0.5);
+
+					// ground
+
+
+
+					//
+					var SoundControls = function() {
+						this.volume = listener.getMasterVolume();
+						this.ambient = sound4.getVolume();
+
+					};
+
+
+
+
+
+					/////////////////////////////////////////////////////////////////////
+					var isMobile = window.matchMedia("only screen and (max-width: 760px)");
+					if (isMobile.matches) {
+						$(".grid__item").removeClass('no-touch');
+						$(".element").typed({
+							strings: ["Hello", "<p class='glitch3' data-text='Mobile Not Supported'>Mobile Not Supported</p>"],
+							startDelay: 500,
+							backDelay: 1000,
+							typeSpeed: 10,
+							backSpeed: 10,
+							showCursor: false
+						});
+
+					} else {
+
+						$(".element").typed({
+							strings: ["Hello", "<p class='glitch' data-text='Click to Begin'>Click to Begin</p>"],
+							startDelay: 500,
+							backDelay: 1000,
+							typeSpeed: 10,
+							backSpeed: 10,
+							showCursor: false
+						});
+
+						$(".start").click(function() {
+							$(".start").addClass("hide");
+							$(".start").removeClass("start");
+							volumeTicker = 1;
+						});
+
+						$("#container").click(function() {
+							$(".hide div").html("<div><p class='glitch2' data-text='Click to Resume'>Click to Resume</p>");
+
+							$(".hide").addClass("start");
+							$(".hide").removeClass("hide");
+							volumeTicker = 0;
+						});
+
+					}
+
+
+
+
+
+
+
+					///
+					renderer = new THREE.WebGLRenderer({
+						antialias: true
+					});
+					renderer.setPixelRatio($(container).devicePixelRatio);
+					renderer.setSize($(container).width(), $(container).height());
+
+					container.innerHTML = "";
+					container.appendChild(renderer.domElement);
+
+					//
+					controls = new THREE.FirstPersonControls(camera, renderer.domElement);
+
+					// controls.movementSpeed = 1000;
+					// controls.lookSpeed = .2;
+					//
+					// controls.noFly = true;
+					// controls.lookVertical = false;
+					controls.lon = 270;
+
+					initSky();
+
+					window.addEventListener('resize', onContainerResize, false);
+
+					var volumeTicker = 0
+					var render = function() {
+
+						requestAnimationFrame(render);
+
+						var time = Date.now() * 0.001;
+						// mesh14.rotation.x += 0.005;
+						// mesh14.rotation.y += 0.005;
+						// mesh13.rotation.x += 0.005;
+						// mesh13.rotation.y += 0.005;
+						// mesh12.rotation.x += 0.005;
+						// mesh12.rotation.y += 0.005;
+						mesh11.rotation.x += 0.005;
+						mesh11.rotation.y += 0.005;
+
+
+
+
+
+						pivot1.rotation.y +=0.011;
+						pivot2.rotation.y +=0.012;
+						pivot3.rotation.y +=0.013;
+						pivot4.rotation.y +=0.014;
+						pivot5.rotation.y +=0.015;
+						pivot6.rotation.y +=0.016;
+						pivot7.rotation.y +=0.017;
+						pivot8.rotation.y +=0.018;
+						pivot9.rotation.y +=0.019;
+						mesh10.rotation.y +=0.020;
+
+						var zCamVec = new THREE.Vector3(0,0,-1500);
+ 						var position = camera.localToWorld(zCamVec);
+
+ 						mesh11.position.set(position.x, position.y, position.z);
+
+						// if(-20000<camera.position.z && camera.position.z<20000 && -20000<camera.position.x && camera.position.x<20000){
+						// 	controls.noFly = false;
+						// 	controls.lookVertical = true;
+						// }else{
+						// 	controls.noFly = true;
+						// 	controls.lookVertical = false;
+						// }
+						if(-20000<camera.position.z && camera.position.z<20000 && -20000<camera.position.x && camera.position.x<20000 && volumeTicker===1){
+							listener.setMasterVolume(1);
+							controls.noFly = false;
+							controls.lookVertical = true;
+							controls.movementSpeed = 2000;
+						}else{
+							listener.setMasterVolume(0);
+							controls.noFly = true;
+							controls.lookVertical = false;
+							controls.movementSpeed = 100;
+						}
+						if(volumeTicker===1){
+							scene.remove(mesh11);
+							controls.movementSpeed = 1000;
+							controls.lookSpeed = .1;
+						}
+						if(volumeTicker===0){
+							scene.add(mesh11);
+							controls.movementSpeed = 0;
+							controls.lookSpeed = 0;
+
+
+						}
+						if(-21000<camera.position.z && camera.position.z<21000 && -21000<camera.position.x && camera.position.x<21000){
+							if(pyramid.rotation.x < 0){
+								pyramid.rotation.x += .03
+						}
+					}else{
+						if(pyramid.rotation.x > -(Math.PI/2)){
+							pyramid.rotation.x -= .03
+						}
+					}
+						if(-20000<camera.position.z && camera.position.z<20000 && -20000<camera.position.x && camera.position.x<20000){
+						// 	function pyramidrot(){
+						// 	if(pyramid.rotation.x > -(Math.PI/2)){
+						// 		pyramid.rotation.x -= .003
+						// 	}
+						// }
+						// 	setTimeout( pyramidrot, 3000 );
+
+						pivot1.rotation.y +=0.11;
+						pivot2.rotation.y +=0.12;
+						pivot3.rotation.y +=0.13;
+						pivot4.rotation.y +=0.14;
+						pivot5.rotation.y +=0.15;
+						pivot6.rotation.y +=0.16;
+						pivot7.rotation.y +=0.17;
+						pivot8.rotation.y +=0.18;
+						pivot9.rotation.y +=0.19;
+						mesh10.rotation.y +=0.20;
+						function extend(){
+
+
+						if(pivot2.position.y <-100){
+							pivot2.position.y += 20
+						} else{
+							pivot2.position.y = -100
+						}
+						if(pivot3.position.y <-100){
+							pivot3.position.y += 20
+						} else{
+							pivot3.position.y = -100
+						}
+						if(pivot4.position.y <-100){
+							pivot4.position.y += 20
+						} else{
+							pivot4.position.y = -100
+						}
+						if(pivot5.position.y <-100){
+							pivot5.position.y += 20
+						} else{
+							pivot5.position.y = -100
+						}
+						if(pivot6.position.y <-100){
+							pivot6.position.y += 20
+						} else{
+							pivot6.position.y = -100
+						}
+						if(pivot7.position.y <-100){
+							pivot7.position.y += 20
+						} else{
+							pivot7.position.y = -100
+						}
+						if(pivot8.position.y <-100){
+							pivot8.position.y += 20
+						} else{
+							pivot8.position.y = -100
+						}
+						if(pivot9.position.y <-100){
+							pivot9.position.y += 20
+						} else{
+							pivot9.position.y = -100
+						}
+						if(mesh10.position.y < 3390){
+							mesh10.position.y += 20
+						} else{
+							mesh10.position.y = 3390
+						}
+					}
+					extend();
+					} else{
+
+
+
+						function retract(){
+						if(pivot2.position.y >-410){
+							pivot2.position.y -= 30
+						} else{
+							pivot2.position.y = -410
+						}
+						if(pivot3.position.y >-820){
+							pivot3.position.y -= 30
+						} else{
+							pivot3.position.y = -820
+						}
+						if(pivot4.position.y >-1230){
+							pivot4.position.y -= 30
+						} else{
+							pivot4.position.y = -1230
+						}
+						if(pivot5.position.y >-1640){
+							pivot5.position.y -= 30
+						} else{
+							pivot5.position.y = -1640
+						}
+						if(pivot6.position.y >-2050){
+							pivot6.position.y -= 30
+						} else{
+							pivot6.position.y = -2050
+						}
+						if(pivot7.position.y >-2460){
+							pivot7.position.y -= 30
+						} else{
+							pivot7.position.y = -2460
+						}
+						if(pivot8.position.y >-2870){
+							pivot8.position.y -= 30
+						} else{
+							pivot8.position.y = -2870
+						}
+						if(pivot9.position.y >-3280){
+							pivot9.position.y -= 30
+						} else{
+							pivot9.position.y = -3280
+						}
+						if(mesh10.position.y > 0){
+							mesh10.position.y -= 30
+						} else{
+							mesh10.position.y = 0
+						}
+					}
+						retract();
+
+					}
+					// var randomnumber = Math.random();
+					// if(randomnumber>.85){
+					// 	lights.intensity = 0
+					// }else{
+					// 	lights.intensity = 2
+					// }
+
+
+						// mesh14.morphTargetInfluences[0] = (1 + Math.sin(4 * time)) / 2;
+						// mesh13.morphTargetInfluences[0]= (1 + Math.sin(4 * time)) / 2;
+						// 	mesh12.morphTargetInfluences[0] = (1 + Math.sin(4 * time)) / 2;
+
+
+							mesh11.morphTargetInfluences[0]= (1 + Math.sin(4 * time)) / 2;
+							mesh10.morphTargetInfluences[0] = (1 + Math.sin(4 * time)) / 2;
+							mesh9.morphTargetInfluences[0]= (1 + Math.sin(4 * time)) / 2;
+							mesh8.morphTargetInfluences[0] = (1 + Math.sin(4 * time)) / 2;
+							mesh7.morphTargetInfluences[0]= (1 + Math.sin(4 * time)) / 2;
+							mesh6.morphTargetInfluences[0] = (1 + Math.sin(4 * time)) / 2;
+							mesh5.morphTargetInfluences[0]= (1 + Math.sin(4 * time)) / 2;
+							mesh4.morphTargetInfluences[0] = (1 + Math.sin(4 * time)) / 2;
+							mesh3.morphTargetInfluences[0]= (1 + Math.sin(4 * time)) / 2;
+							mesh2.morphTargetInfluences[0] = (1 + Math.sin(4 * time)) / 2;
+							mesh1.morphTargetInfluences[0]= (1 + Math.sin(4 * time)) / 2;
+
+
+						// renderer.context.getProgramInfoLog = function () { return '' };
+
+						// sky.uniforms.luminance.value = 1 +	Math.sin(time/10)*.95;
+						sky.uniforms.luminance.value = 1.2
+
+						sky.uniforms.reileigh.value  = 2 + Math.sin(time/4000)* -2;
+						// sky.uniforms.reileigh.value  = 0;
+
+						var distance = 400000;
+
+						var inclination = 0.35 + Math.sin(time/13)* -.16;
+						var azimuth = .25 + Math.sin(time/47)* .1;
+						var theta = Math.PI * (inclination - 0.5);
+						var phi = 2 * Math.PI * (azimuth - 0.5);
+						sunSphere.position.x = distance * Math.cos(phi);
+						sunSphere.position.y = distance * Math.sin(phi) * Math.sin(theta);
+						sunSphere.position.z = distance * Math.sin(phi) * Math.cos(theta);
+						sky.uniforms.sunPosition.value.copy(sunSphere.position);
+
+						renderer.render(scene, camera);
+
+					};
+
+
+					render();
+
+
+
+
+
+
+
+				}
+
+				function onContainerResize() {
+
+					camera.aspect = $(container).width() / $(container).height();
+					camera.updateProjectionMatrix();
+
+					renderer.setSize($(container).width(), $(container).height());
+
+					controls.handleResize();
+
+				}
+
+				function animate() {
+
+					requestAnimationFrame(function() {
+						animate();
+					});
+					render();
+
+				}
+
+				function render() {
+
+					var delta = clock.getDelta();
+
+					controls.update(delta);
+
+					material_sphere1.emissive.b = analyser1.getData()[8] / 256;
+					material_sphere2.emissive.b = analyser2.getData()[8] / 256;
+					material_sphere3.emissive.b = analyser3.getData()[8] / 256;
+					material_sphere4.emissive.b = analyser4.getData()[8] / 256;
+					material_sphere5.emissive.b = analyser5.getData()[8] / 256;
+					material_sphere6.emissive.b = analyser6.getData()[8] / 256;
+					material_sphere7.emissive.b = analyser7.getData()[8] / 256;
+					material_sphere8.emissive.b = analyser8.getData()[8] / 256;
+					material_sphere9.emissive.b = analyser9.getData()[8] / 256;
+
+
+					renderer.render(scene, camera);
+
+				}
+
+
+
+
+			});
+		});
+	</script>
+</body>
+
+</html>

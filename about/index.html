@@ -1,0 +1,341 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <style>
+        html {
+            -webkit-tap-highlight-color: transparent;
+            font-smooth: never;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            position: fixed;
+            overflow: hidden;
+            font-family: futura;
+            margin: 0;
+            background-size: cover;
+        }
+
+        body:before {
+            content: "";
+            position: absolute;
+            /*width: 300vw;
+            height: 300vh;*/
+            width: 120vw;
+            height: 120vh;
+            top: -10%;
+            left: -10%;
+            z-index: -1;
+            background: url('IMG_2314.jpg') 0 0 no-repeat;
+            background-size: cover;
+            -webkit-transform: rotate(2.5deg);
+            -moz-transform: rotate(2.5deg);
+            -ms-transform: rotate(2.5deg);
+            -o-transform: rotate(2.5deg);
+            transform: rotate(2.5deg);
+            overflow: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: rgba(0, 0, 0, 0.45);
+        }
+
+        a:hover {
+            color: black;
+        }
+
+        .richard {
+            position: fixed;
+            border-radius: 50%;
+            bottom: -28vw;
+            left: -10vw;
+            width: 50vw;
+            height: 50vw;
+            background-color: rgba(232, 231, 221, 1);
+            box-shadow: 0px 0px 100px rgba(0, 0, 0, 1);
+            text-align: center;
+            z-index: 501;
+            transition: .5s;
+        }
+
+        .richard:hover {
+            bottom: -30vw;
+        }
+
+        .education {
+            position: fixed;
+            border-radius: 50%;
+            bottom: -29vw;
+            left: 36vw;
+            width: 45vw;
+            height: 45vw;
+            background-color: rgba(232, 231, 221, .8);
+            text-align: center;
+            z-index: 500;
+            transition: .5s;
+        }
+
+        .education:hover {
+            bottom: -31vw;
+        }
+
+        .contact {
+            position: fixed;
+            border-radius: 50%;
+            bottom: -28.5vw;
+            right: -6vw;
+            width: 42vw;
+            height: 42vw;
+            background-color: rgba(232, 231, 221, 1);
+            box-shadow: 0px 0px 100px rgba(0, 0, 0, 1);
+            z-index: 501;
+            text-align: center;
+            transition: .5s;
+        }
+
+        .contact:hover {
+            bottom: -30.5vw;
+        }
+
+        .dec1 {
+            position: fixed;
+            border-radius: 50%;
+            top: -38vw;
+            left: 53vw;
+            width: 42vw;
+            height: 42vw;
+            box-shadow: 0px 0px 100px rgba(0, 0, 0, 1);
+            background-color: rgba(232, 231, 221, 1);
+            z-index: 501;
+            transition: .5s;
+        }
+        .dec1:hover{
+          top:-39vw
+
+        }
+        .dec2 {
+            position: fixed;
+            border-radius: 50%;
+            top: -35vw;
+            right: -17vw;
+            width: 45vw;
+            height: 45vw;
+            background-color: rgba(232, 231, 221, 0.8);
+            z-index: 500;
+            transition: .5s;
+        }
+        .dec2:hover{
+          top:-37vw;
+        }
+
+        footer {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            position: fixed;
+            bottom: 2vw;
+            width: 100vw;
+            z-index: 502;
+        }
+
+        section {
+            bottom: 0vw;
+            width: 100vw;
+            height: 100vh;
+            color: white;
+            z-index: 998;
+            display: flex;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.4)
+        }
+
+        p {
+            width: 40vw;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20vh;
+            margin-left: 38.5vw;
+            font-size: calc(13px + 1vw);
+        }
+
+        h1 {
+            align-items: baseline;
+            font-size: calc(13px + 1vw);
+            margin: 0;
+            margin-left: 2vw;
+            border: 0;
+        }
+
+        .richardt {
+            width: 38.5vw;
+            font-size: calc(16px + .5vw);
+            font-weight: 600;
+            z-index: 999;
+
+        }
+
+        .educationt {
+            width: 40vw;
+            font-size: calc(8px + .4vw);
+            font-weight: 600;
+            text-align: center;
+            color: rgba(0, 0, 0, 0.25);
+        }
+
+        .contactt {
+            width: 21.5vw;
+            font-size: calc(8px + .4vw);
+            text-align: left;
+            font-weight: 600;
+            z-index: 999;
+        }
+
+        @media screen and (max-width: 600px) {
+            .dec1,
+            .dec2 {
+                display: none;
+            }
+            section {
+                justify-content: center;
+            }
+            p {
+                width: 80vw;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 20vh;
+                margin-left: 0;
+            }
+            h1 {
+                margin-left: 2vw;
+            }
+            .richardt {
+                position: absolute;
+                left: 2vw;
+                bottom: 2vw
+            }
+            .educationt {
+                position: absolute;
+                width: 100vw;
+                text-align: center;
+                bottom: 2vw
+            }
+            .contactt {
+                width: 30.5vw;
+                position: absolute;
+                right: 2vw;
+                text-align: left;
+                bottom: 2vw
+            }
+            .richard {
+                position: fixed;
+                border-radius: 50%;
+                bottom: -28vw;
+                left: -10vw;
+                width: 50vw;
+                height: 50vw;
+                background-color: rgba(232, 231, 221, 1);
+                text-align: center;
+            }
+            /*.richard:hover{
+              bottom: -28vw;
+            }*/
+            .education {
+                position: fixed;
+                border-radius: 50%;
+                bottom: -28vw;
+                left: 25vw;
+                width: 50vw;
+                height: 50vw;
+                background-color: rgba(232, 231, 221, 1);
+                text-align: center;
+            }
+            /*.education:hover{
+              bottom:-28vw;
+            }*/
+            .contact {
+                position: fixed;
+                border-radius: 50%;
+                bottom: -28vw;
+                right: -10vw;
+                width: 50vw;
+                height: 50vw;
+                background-color: rgba(232, 231, 221, 1);
+                text-align: center;
+            }
+            /*.contact:hover{
+              bottom:-28vw;
+            }*/
+        }
+    </style>
+    <script src="../js/jquery.min.js"></script>
+    <script>
+    $( document ).ready(function() {
+
+
+
+                $('.richardt').hover(function() {
+                    $('.richard').css('bottom', '-30vw');
+                }, function() {
+                    $('.richard').css('bottom', '');
+                });
+                $('.educationt').hover(function() {
+                    $('.education').css('bottom', '-31vw');
+                }, function() {
+                    $('.education').css('bottom', '');
+                });
+                $('.contactt').hover(function() {
+                    $('.contact').css('bottom', '-30.5vw');
+                }, function() {
+                    $('.contact').css('bottom', '');
+                });
+
+
+
+
+        });
+    </script>
+
+</head>
+
+<body>
+    <div class="richard">
+
+    </div>
+
+    <div class="education">
+
+    </div>
+    <div class="contact">
+
+    </div>
+    <div class='dec1'>
+    </div>
+    <div class='dec2'>
+    </div>
+    <footer>
+        <div class="richardt">
+            <h1>
+          Richard Yee
+        </h1>
+        </div>
+        <div class="educationt">
+            Cooper Union
+            <br> BFA 2014-2018
+
+        </div>
+        <div class="contactt">
+            <a href="mailto:rich@yeemachine.com">rich@yeemachine.com</a>
+            <br> <a href="tel:408-528-5260">408-528-5260</a>
+        </div>
+    </footer>
+    <section>
+        <p>
+            I am an content creator living in NYC and California. I experiment with static and dynamic mediums to satisfy the itch of content creation. I would love to make a game at some point in my life. I also watch other people play games.
+        </p>
+    </section>
+</body>
+
+</html>
