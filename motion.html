@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Three.js Material Browser</title>
+		<style>
+
+			body {
+				margin:0;
+				font-family: 'inconsolata';
+				font-size: 15px;
+				line-height: 18px;
+				overflow: hidden;
+background-color: black;
+			}
+
+			canvas { width: 100%; height: 100% }
+
+			#newWindow {
+				display: block;
+				position: absolute;
+				bottom: 0.3em;
+				left: 0.5em;
+				color: #fff;
+			}
+		</style>
+	</head>
+	<body>
+
+		<a id='newWindow' href='./material-browser.html' target='_blank'></a>
+		<script src="build/three.js"></script>
+		<script src='js/libs/dat.gui.min.js'></script>
+		<script src='material.js'></script>
+			<script src="js/controls/FirstPersonControls.js"></script>
+			<script src="js/controls/TrackballControls.js"></script>
+
+		<script>
+
+			document.getElementById( 'newWindow' ).href += window.location.hash;
+
+			// var gui = new dat.GUI();
+
+			var scene = new THREE.Scene();
+			var clock = new THREE.Clock();
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, .1, 2000000 );
+			var analyser1
+
+			scene.background = new THREE.Color( 0xff0000 );
+			camera.position.z = 500;
+
+			var renderer = new THREE.WebGLRenderer( { antialias: true, alpha:true} );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setClearColor( 0x000000, 0 )
+			// renderer.setClearColor( 0x000000 );
+			document.body.appendChild( renderer.domElement );
+
+			var listener = new THREE.AudioListener();
+							camera.add(listener);
+
+ 					// 	texture = new THREE.TextureLoader().load( "img/daniil.jpg" );
+
+						var material = new THREE.MeshLambertMaterial({
+							 map: THREE.ImageUtils.loadTexture('img/daniil.png'),
+							morphTargets: true,
+							// color: 0xffffff,
+							wireframe: false,
+							wireframeLinewidth: 2,
+							wireframeLinejoin:'bevel',
+							transparent: true
+							// emissive:'#ffffff'
+						});
+
+
+
+			// var controls = new THREE.FirstPersonControls(camera, renderer.domElement);
+			//
+			// controls.movementSpeed = 50;
+			// controls.lookSpeed = .1;
+			// controls.noFly = true;
+			// controls.lookVertical = false;
+			// controls.lon = 270;
+
+
+			controls = new THREE.TrackballControls( camera, renderer.domElement );
+
+				controls.rotateSpeed = 2.0;
+				controls.zoomSpeed = 1.2;
+				controls.panSpeed = 0.8;
+
+				controls.noZoom = false;
+				controls.noPan = false;
+
+				controls.staticMoving = true;
+				controls.dynamicDampingFactor = 0;
+
+
+
+
+
+			var ambientLight = new THREE.AmbientLight( 0x404040 );
+			scene.add( ambientLight );
+
+			var lightsphere = new THREE.Object3D();
+
+				var geometry = new THREE.IcosahedronGeometry( 10, 4 );
+				// var geometry = new THREE.TorusKnotGeometry( 10, 3, 100, 16 );
+				var sphere = new THREE.IcosahedronGeometry( 1, 3 );
+
+
+
+			var lights = [];
+			lights[ 0 ] = new THREE.PointLight( 0xff0040, 10, 40,2 );
+			lights[ 1 ] = new THREE.PointLight( 0x80ff80, 10, 30,2 );
+			lights[ 2 ] = new THREE.PointLight( 0xffaa00, 10, 30,2);
+
+
+
+			lights[0].add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xff0040} ) ) );
+			lights[1].add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0x80ff80 } ) ) );
+			lights[2].add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xffaa00 } ) ) );
+
+
+			lights[ 0 ].position.set( 0, 20, 0 );
+			lights[ 1 ].position.set( -20, -10 , 0 );
+			lights[ 2 ].position.set(20, -10, 0 );
+
+			lightsphere.add( lights[ 0 ] );
+			lightsphere.add( lights[ 1 ] );
+			lightsphere.add( lights[ 2 ] );
+
+
+
+
+
+
+			var mesh = new THREE.Mesh( geometry, material );
+			mesh.position.x=0
+
+			lightsphere.add( mesh );
+
+			//
+			// lightsphere.position.x = 50;
+			var pivots = [];
+			for (var i = 0; i < 15; i++) {
+				var lightsphereclone = lightsphere.clone();
+				lightsphereclone.position.x = (Math.random() - 0.5) * 1000;
+				lightsphereclone.position.y = (Math.random() - 0.5) * 1000;
+				lightsphereclone.position.z = (Math.random() - 0.5) * 1000;
+				lightsphereclone.rotation.z = (Math.random() - 0.5) * 5;
+				lightsphereclone.rotation.y = (Math.random() - 0.5) * 5;
+				lightsphereclone.rotation.x = (Math.random() - 0.5) * 5;
+				var sound1 = new THREE.PositionalAudio(listener);
+						sound1.load('sounds/halp.ogg');
+						sound1.setRefDistance(20);
+						sound1.autoplay = true;
+						sound1.setLoop(true);
+						lightsphereclone.add(sound1);
+
+
+			var pivot = new THREE.Object3D();
+			pivot.add( lightsphereclone );
+			pivot.position.x = (Math.random() - 0.5) * 50;
+			pivot.position.y = (Math.random() - 0.5) * 50;
+			pivot.position.z = (Math.random() - 0.5) * 50;
+			pivot.rotation.z = (Math.random() - 0.5) * 5;
+			pivot.rotation.y = (Math.random() - 0.5) * 5;
+			pivot.rotation.x = (Math.random() - 0.5) * 5;
+			scene.add( pivot );
+			pivots.push(pivot);
+			scene.add( lightsphere );
+
+			}
+
+
+
+
+
+
+			scene.add(lightsphere);
+			generateMorphTargets( mesh, geometry );
+			updateMorphs(mesh, material);
+
+
+			analyser1 = new THREE.AudioAnalyser(sound1, 32);
+
+			// var prevFog = false;
+
+			var render = function () {
+
+				requestAnimationFrame( render );
+				var delta = clock.getDelta();
+				controls.update(delta);
+
+
+				var time = Date.now() * 0.001;
+
+				pivots.forEach(function(pivot) {
+					pivot.rotation.x += 0.01;
+					pivot.rotation.y += 0.01;
+				});
+
+				// lightsphere.rotation.x += 0.01;
+				// lightsphere.rotation.y += 0.01;
+
+				var randomnumber = Math.random();
+// 				if(randomnumber>.85){
+//
+// 					lights[ 0 ].intensity = 0
+// 					lights[ 1 ].intensity = 0
+// 					lights[ 2 ].intensity = 0
+// 					listener.setMasterVolume(0);
+//
+// 					lights[0].visible = false;
+// 					lights[1].visible = false;
+// 					lights[2].visible = false;
+// }else{
+// 					lights[0].visible = true;
+// 					lights[1].visible = true;
+// 					lights[2].visible = true;
+// 					lights[ 0 ].intensity = 3
+// 					lights[ 1 ].intensity = 3
+// 					lights[ 2 ].intensity = 3
+// 					listener.setMasterVolume(1);
+//
+// 				}
+
+
+				mesh.morphTargetInfluences[ 0 ] = ( 1 + Math.sin( .5 * time ) ) / 2;
+
+
+				renderer.context.getProgramInfoLog = function () { return '' };
+
+				renderer.render( scene, camera );
+
+			};
+
+			window.addEventListener( 'resize', function () {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}, false );
+
+			render();
+
+		</script>
+	</body>
+</html>
