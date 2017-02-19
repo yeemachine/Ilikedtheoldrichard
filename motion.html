@@ -12,7 +12,7 @@
 				font-size: 15px;
 				line-height: 18px;
 				overflow: hidden;
-background-color: rgba(25,25,25,1);
+background-color: rgba(25,25,55,1);
 }
 
 			canvas {
@@ -48,7 +48,9 @@ background-color: rgba(25,25,25,1);
 			var analyser1
 
 			scene.background = new THREE.Color( 0xff0000 );
-			camera.position.z = 250;
+			scene.fog = new THREE.Fog(0xffffff, 30, 100);
+
+			camera.position.z = 70;
 
 			var renderer = new THREE.WebGLRenderer( { antialias: true, alpha:true} );
 			renderer.setPixelRatio( window.devicePixelRatio );
@@ -75,26 +77,26 @@ background-color: rgba(25,25,25,1);
 
 
 
-			// var controls = new THREE.FirstPersonControls(camera, renderer.domElement);
+			var controls = new THREE.FirstPersonControls(camera, renderer.domElement);
+
+			controls.movementSpeed = 50;
+			controls.lookSpeed = .1;
+			controls.noFly = true;
+			controls.lookVertical = false;
+			controls.lon = 270;
+
+
+			// controls = new THREE.TrackballControls( camera, renderer.domElement );
 			//
-			// controls.movementSpeed = 50;
-			// controls.lookSpeed = .1;
-			// controls.noFly = true;
-			// controls.lookVertical = false;
-			// controls.lon = 270;
-
-
-			controls = new THREE.TrackballControls( camera, renderer.domElement );
-
-				controls.rotateSpeed = 2.0;
-				controls.zoomSpeed = 1.2;
-				controls.panSpeed = 0.8;
-
-				controls.noZoom = false;
-				controls.noPan = false;
-
-				controls.staticMoving = true;
-				controls.dynamicDampingFactor = 0;
+			// 	controls.rotateSpeed = 2.0;
+			// 	controls.zoomSpeed = 1.2;
+			// 	controls.panSpeed = 0.8;
+			//
+			// 	controls.noZoom = false;
+			// 	controls.noPan = false;
+			//
+			// 	controls.staticMoving = true;
+			// 	controls.dynamicDampingFactor = 0;
 
 
 
@@ -112,20 +114,24 @@ background-color: rgba(25,25,25,1);
 
 
 			var lights = [];
-			lights[ 0 ] = new THREE.PointLight( 0xff0040, 10, 40,2 );
-			lights[ 1 ] = new THREE.PointLight( 0x80ff80, 10, 30,2 );
-			lights[ 2 ] = new THREE.PointLight( 0xffaa00, 10, 30,2);
+			var lightcolor1 =  Math.random() * 0xffffff
+			var lightcolor2 =  Math.random() * 0xffffff
+			var lightcolor3 =  Math.random() * 0xffffff
+			light1 = new THREE.PointLight( lightcolor1, 10, 40,5 );
+			light2 = new THREE.PointLight( lightcolor2, 10, 30,5 );
+			light3 = new THREE.PointLight( lightcolor3, 10, 30,5);
+			lights.push(light1, light2, light3);
 
 
 
-			lights[0].add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xff0040} ) ) );
-			lights[1].add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0x80ff80 } ) ) );
-			lights[2].add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xffaa00 } ) ) );
+			light1.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor1} ) ) );
+			light2.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor2 } ) ) );
+			light3.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor3 } ) ) );
 
 
-			lights[ 0 ].position.set( 0, 20, 0 );
-			lights[ 1 ].position.set( -20, -10 , 0 );
-			lights[ 2 ].position.set(20, -10, 0 );
+			light1.position.set( 0, 20, 0 );
+			light2.position.set( -20, -10 , 0 );
+			light3.position.set(20, -10, 0 );
 
 			lightsphere.add( lights[ 0 ] );
 			lightsphere.add( lights[ 1 ] );
@@ -144,7 +150,7 @@ background-color: rgba(25,25,25,1);
 			//
 			// lightsphere.position.x = 50;
 			var pivots = [];
-			for (var i = 0; i < 15; i++) {
+			for (var i = 0; i < 19; i++) {
 				var lightsphereclone = lightsphere.clone();
 				lightsphereclone.position.x = (Math.random() - 0.5) * 1000;
 				lightsphereclone.position.y = (Math.random() - 0.5) * 1000;
@@ -206,29 +212,37 @@ background-color: rgba(25,25,25,1);
 				// lightsphere.rotation.y += 0.01;
 
 				var randomnumber = Math.random();
-// 				if(randomnumber>.85){
-//
-// 					lights[ 0 ].intensity = 0
-// 					lights[ 1 ].intensity = 0
-// 					lights[ 2 ].intensity = 0
-// 					listener.setMasterVolume(0);
-//
-// 					lights[0].visible = false;
-// 					lights[1].visible = false;
-// 					lights[2].visible = false;
-// }else{
-// 					lights[0].visible = true;
-// 					lights[1].visible = true;
-// 					lights[2].visible = true;
-// 					lights[ 0 ].intensity = 3
-// 					lights[ 1 ].intensity = 3
-// 					lights[ 2 ].intensity = 3
-// 					listener.setMasterVolume(1);
-//
-// 				}
+				if(randomnumber>.85){
+
+					// lights[ 0 ].intensity = 0
+					// lights[ 1 ].intensity = 0
+					// lights[ 2 ].intensity = 0
+
+					pivots.forEach(function(light) {
+						light1.intensity = 0
+						light2.intensity = 0
+						light3.intensity = 0
+
+					});
+
+					// listener.setMasterVolume(0);
+
+					// lights[0].visible = false;
+					// lights[1].visible = false;
+					// lights[2].visible = false;
+}else{
+					// lights[0].visible = true;
+					// lights[1].visible = true;
+					// lights[2].visible = true;
+					light1.intensity = 10
+					light2.intensity = 10
+					light3.intensity = 10
+					// listener.setMasterVolume(1);
+
+				}
 
 
-				mesh.morphTargetInfluences[ 0 ] = ( 1 + Math.sin( .5 * time ) ) / 2;
+				mesh.morphTargetInfluences[ 0 ] = ( 1 + Math.sin( 8 * time ) ) / 2;
 
 
 				renderer.context.getProgramInfoLog = function () { return '' };
