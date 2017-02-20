@@ -367,6 +367,18 @@ animation: blurbanim 40s infinite linear;
 							if (isMobile.matches) {
 
 								effect.render( scene, camera );
+								if(camera.position.z>50){
+									camera.position.z-=1
+								}
+								if(camera.position.z<-50){
+									camera.position.z+=1
+								}
+								if(camera.position.x>0){
+									camera.position.x-=1
+								}
+								if(camera.position.x>0){
+									camera.position.x+=1
+								}
 
 
 							} else {
