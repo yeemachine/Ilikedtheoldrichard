@@ -230,23 +230,9 @@ animation: blurbanim 40s infinite linear;
 
 						var isMobile = window.matchMedia("only screen and (max-width: 760px)");
 									if (isMobile.matches) {
-										var vrControls = new THREE.VRControls(camera);
-										var fpVrControls = new THREE.FirstPersonVRControls(camera, scene);
-										// Optionally enable vertical movement.
-										fpVrControls.verticalMovement = true;
-										var effect = new THREE.VREffect(renderer);
-										effect.setSize(window.innerWidth, window.innerHeight);
-										function animate(timestamp) {
+										controls = new THREE.VRControls( camera );
+										effect = new THREE.VREffect( renderer );
 
-										  // Update FirstPersonVRControls after VRControls.
-										  // FirstPersonVRControls requires a timestamp.
-										  vrControls.update();
-										  fpVrControls.update(timestamp);
-
-										  requestAnimationFrame(animate);
-											}
-
-											animate();
 
 									} else {
 										var controls = new THREE.FirstPersonControls(camera, renderer.domElement);
@@ -379,6 +365,9 @@ animation: blurbanim 40s infinite linear;
 
 				var isMobile = window.matchMedia("only screen and (max-width: 760px)");
 							if (isMobile.matches) {
+
+								effect.render( scene, camera );
+
 
 							} else {
 								controls.update(delta);
