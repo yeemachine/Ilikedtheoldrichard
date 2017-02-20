@@ -148,6 +148,7 @@ animation: blurbanim 40s infinite linear;
 			<script src="js/controls/FirstPersonVRControls.js"></script>
 			<script src="js/controls/VRControls.js"></script>
 			<script src="js/VREffect.js"></script>
+			<script src="js/webvr-manager.js"></script>
 
 			<script src="js/jquery.min.js"></script>
 
@@ -233,13 +234,20 @@ animation: blurbanim 40s infinite linear;
 										var fpVrControls = new THREE.FirstPersonVRControls(camera, scene);
 										// Optionally enable vertical movement.
 										fpVrControls.verticalMovement = true;
+										var effect = new THREE.VREffect(renderer);
+										effect.setSize(window.innerWidth, window.innerHeight);
+										function animate(timestamp) {
 
-										function animate (timestamp) {
+										  // Update FirstPersonVRControls after VRControls.
+										  // FirstPersonVRControls requires a timestamp.
+										  vrControls.update();
+										  fpVrControls.update(timestamp);
 
-  									vrControls.update();
-  								fpVrControls.update(timestamp);
+										  requestAnimationFrame(animate);
+											}
 
-									}
+											animate();
+
 									} else {
 										var controls = new THREE.FirstPersonControls(camera, renderer.domElement);
 
