@@ -77,13 +77,13 @@ container.appendChild( renderer.domElement );
         });
 
 
-        var isMobile = window.matchMedia("only screen and (max-width: 760px)");
-              if (isMobile.matches) {
-                controls = new THREE.VRControls( camera );
-                effect = new THREE.VREffect( renderer );
-
-
-              } else {
+        // var isMobile = window.matchMedia("only screen and (max-width: 760px)");
+        //       if (isMobile.matches) {
+        //         controls = new THREE.VRControls( camera );
+        //         effect = new THREE.VREffect( renderer );
+        //
+        //
+        //       } else {
                 var controls = new THREE.FirstPersonControls(camera, renderer.domElement);
 
                 controls.movementSpeed = 100;
@@ -91,7 +91,7 @@ container.appendChild( renderer.domElement );
                 controls.noFly = true;
                 controls.lookVertical = false;
                 controls.lon = 270;
-              }
+              // }
 
 
 
@@ -212,25 +212,25 @@ container.appendChild( renderer.domElement );
     var delta = clock.getDelta();
     var time = Date.now() * 0.001;
 
-    var isMobile = window.matchMedia("only screen and (max-width: 760px)");
-          if (isMobile.matches) {
-
-            effect.render( scene, camera );
-            if(camera.position.z>50){
-              camera.position.z-=1
-            }
-            if(camera.position.z<-50){
-              camera.position.z+=1
-            }
-            if(camera.position.x>0){
-              camera.position.x-=1
-            }
-            if(camera.position.x>0){
-              camera.position.x+=1
-            }
-
-
-          } else {
+    // var isMobile = window.matchMedia("only screen and (max-width: 760px)");
+    //       if (isMobile.matches) {
+    //
+    //         effect.render( scene, camera );
+    //         if(camera.position.z>50){
+    //           camera.position.z-=1
+    //         }
+    //         if(camera.position.z<-50){
+    //           camera.position.z+=1
+    //         }
+    //         if(camera.position.x>0){
+    //           camera.position.x-=1
+    //         }
+    //         if(camera.position.x>0){
+    //           camera.position.x+=1
+    //         }
+    //
+    //
+    //       } else {
             controls.update(delta);
             if (volumeTicker === 1) {
             listener.setMasterVolume(1);
@@ -256,7 +256,7 @@ container.appendChild( renderer.domElement );
               }
 
             }
-          }
+          // }
 
 
 
