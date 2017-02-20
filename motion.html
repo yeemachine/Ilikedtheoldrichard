@@ -145,6 +145,10 @@ animation: blurbanim 40s infinite linear;
 		<script src='material.js'></script>
 			<script src="js/controls/FirstPersonControls.js"></script>
 			<script src="js/controls/TrackballControls.js"></script>
+			<script src="js/controls/FirstPersonVRControls.js"></script>
+			<script src="js/controls/VRControls.js"></script>
+			<script src="js/VREffect.js"></script>
+
 			<script src="js/jquery.min.js"></script>
 
 
@@ -223,14 +227,29 @@ animation: blurbanim 40s infinite linear;
 						});
 
 
+						var isMobile = window.matchMedia("only screen and (max-width: 760px)");
+									if (isMobile.matches) {
+										var vrControls = new THREE.VRControls(camera);
+										var fpVrControls = new THREE.FirstPersonVRControls(camera, scene);
+										// Optionally enable vertical movement.
+										fpVrControls.verticalMovement = true;
 
-			var controls = new THREE.FirstPersonControls(camera, renderer.domElement);
+										function animate (timestamp) {
 
-			controls.movementSpeed = 100;
-			controls.lookSpeed = .1;
-			controls.noFly = true;
-			controls.lookVertical = false;
-			controls.lon = 270;
+  									vrControls.update();
+  								fpVrControls.update(timestamp);
+
+									}
+									} else {
+										var controls = new THREE.FirstPersonControls(camera, renderer.domElement);
+
+										controls.movementSpeed = 100;
+										controls.lookSpeed = .1;
+										controls.noFly = true;
+										controls.lookVertical = false;
+										controls.lon = 270;
+									}
+
 
 
 			// controls = new THREE.TrackballControls( camera, renderer.domElement );
@@ -348,35 +367,44 @@ animation: blurbanim 40s infinite linear;
 
 				requestAnimationFrame( render );
 				var delta = clock.getDelta();
-				controls.update(delta);
-
-
 				var time = Date.now() * 0.001;
 
-				if (volumeTicker === 1) {
-					listener.setMasterVolume(1);
-					controls.movementSpeed = 100;
-					controls.lookSpeed = .1;
+				var isMobile = window.matchMedia("only screen and (max-width: 760px)");
+							if (isMobile.matches) {
 
-				}
-				if (volumeTicker === 0) {
-					listener.setMasterVolume(0);
-					controls.movementSpeed = 0;
-					controls.lookSpeed = 0;
-					if(camera.position.z>50){
-						camera.position.z-=1
-					}
-					if(camera.position.z<-50){
-						camera.position.z+=1
-					}
-					if(camera.position.x>0){
-						camera.position.x-=1
-					}
-					if(camera.position.x>0){
-						camera.position.x+=1
-					}
+							} else {
+								controls.update(delta);
+								if (volumeTicker === 1) {
+								listener.setMasterVolume(1);
+									controls.movementSpeed = 100;
+									controls.lookSpeed = .1;
 
-				}
+								}
+								if (volumeTicker === 0) {
+									listener.setMasterVolume(0);
+									controls.movementSpeed = 0;
+									controls.lookSpeed = 0;
+									if(camera.position.z>50){
+										camera.position.z-=1
+									}
+									if(camera.position.z<-50){
+										camera.position.z+=1
+									}
+									if(camera.position.x>0){
+										camera.position.x-=1
+									}
+									if(camera.position.x>0){
+										camera.position.x+=1
+									}
+
+								}
+							}
+
+
+
+
+
+
 
 				pivots.forEach(function(pivot) {
 					var random = Math.random()
