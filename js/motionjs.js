@@ -126,9 +126,9 @@ container.appendChild( renderer.domElement );
   var lightcolor1 =  Math.random() * 0xffffff
   var lightcolor2 =  Math.random() * 0xffffff
   var lightcolor3 =  Math.random() * 0xffffff
-  light1 = new THREE.PointLight( lightcolor1, 10, 40,5 );
-  light2 = new THREE.PointLight( lightcolor2, 10, 30,5 );
-  light3 = new THREE.PointLight( lightcolor3, 10, 30,5);
+  light1 = new THREE.PointLight( lightcolor1, 10, 40,1 );
+  light2 = new THREE.PointLight( lightcolor2, 10, 30,1 );
+  light3 = new THREE.PointLight( lightcolor3, 10, 30,1);
   lights.push(light1, light2, light3);
 
 
@@ -279,6 +279,19 @@ container.appendChild( renderer.domElement );
     // lightsphere.rotation.y += 0.01;
 
     var randomnumber = Math.random();
+      lights[ 0 ].position.y+= Math.sin(time*7)/3
+      lights[ 1 ].position.x-= Math.sin(time*7)/3
+      lights[ 1 ].position.y-= Math.sin(time*7)/3
+      lights[ 2 ].position.x+= Math.sin(time*7)/3
+      lights[ 2 ].position.y-= Math.sin(time*7)/3
+
+clones.forEach(function(lightsphereclone) {
+      lightsphereclone.children[0].position.y+= Math.sin(time*7)/3
+      lightsphereclone.children[1].position.x-= Math.sin(time*7)/3
+      lightsphereclone.children[1].position.y-= Math.sin(time*7)/3
+      lightsphereclone.children[2].position.x+= Math.sin(time*7)/3
+      lightsphereclone.children[2].position.y-= Math.sin(time*7)/3
+  });
     if(randomnumber>.75){
 
       lights[ 0 ].intensity = 0
@@ -302,13 +315,14 @@ container.appendChild( renderer.domElement );
       // lights[0].visible = true;
       // lights[1].visible = true;
       // lights[2].visible = true;
-      lights[ 0 ].intensity = 10
-      lights[ 1 ].intensity = 10
-      lights[ 2 ].intensity = 10
+      lights[ 0 ].intensity = 20
+      lights[ 1 ].intensity = 20
+      lights[ 2 ].intensity = 20
+
       clones.forEach(function(lightsphereclone) {
-        lightsphereclone.children[0].intensity = 10
-        lightsphereclone.children[1].intensity = 10
-        lightsphereclone.children[2].intensity = 10
+        lightsphereclone.children[0].intensity = 20
+        lightsphereclone.children[1].intensity = 20
+        lightsphereclone.children[2].intensity = 20
       });
       // listener.setMasterVolume(1);
 
