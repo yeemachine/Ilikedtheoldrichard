@@ -66,7 +66,7 @@ container.appendChild( renderer.domElement );
       // 	texture = new THREE.TextureLoader().load( "img/daniil.jpg" );
 
         var material = new THREE.MeshLambertMaterial({
-           map: THREE.ImageUtils.loadTexture('img/daniil.png'),
+           map: THREE.ImageUtils.loadTexture('../img/daniil.png'),
           morphTargets: true,
           // color: 0xffffff,
           wireframe: false,
@@ -169,7 +169,7 @@ container.appendChild( renderer.domElement );
     lightsphereclone.rotation.y = (Math.random() - 0.5) * 5;
     lightsphereclone.rotation.x = (Math.random() - 0.5) * 5;
     var sound1 = new THREE.PositionalAudio(listener);
-        sound1.load('sounds/halp.ogg');
+        sound1.load('../sounds/halp.ogg');
         sound1.setRefDistance(20);
         sound1.autoplay = true;
         sound1.setLoop(true);
