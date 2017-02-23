@@ -153,8 +153,8 @@ container.appendChild( renderer.domElement );
 
 
   light1.position.set( 0, 20, 0 );
-  light2.position.set( -20, -10 , 0 );
-  light3.position.set(20, -10, 0 );
+  light2.position.set( 0, -10 , -20 );
+  light3.position.set(0, -10, 20 );
 
   lightsphere.add( lights[ 0 ] );
   lightsphere.add( lights[ 1 ] );
@@ -170,14 +170,26 @@ container.appendChild( renderer.domElement );
 
   var Tor = new THREE.Mesh( Torgeometry, Tormaterial );
   Tor.position.x=0
+  Tor.rotation.y = Math.PI/2;
+
+  // Tor.rotation.z=(Math.PI / 2)
+
   var Tor2 = new THREE.Mesh( Torgeometry, Tormaterial );
   Tor2.position.x=0
 
   Tor2.rotation.x=1
+  Tor2.rotation.y = Math.PI/2;
+
+  // Tor2.rotation.z=(Math.PI / 2)
+
   var Tor3 = new THREE.Mesh( Torgeometry, Tormaterial );
   Tor3.position.x=0
 
   Tor3.rotation.x=-1
+  Tor3.rotation.y = Math.PI/2;
+
+  // Tor3.rotation.z=(Math.PI / 2)
+
 
 
 
@@ -311,6 +323,7 @@ container.appendChild( renderer.domElement );
           lightsphere.children[5].rotation.y +=0.01;
           lightsphere.children[6].rotation.x += 0.01;
           lightsphere.children[6].rotation.y += 0.01;
+          lightsphere.rotation.y = Math.PI/2;
 
     pivots.forEach(function(pivot) {
       var random = Math.random()
@@ -336,9 +349,9 @@ container.appendChild( renderer.domElement );
 
     var randomnumber = Math.random();
       lights[ 0 ].position.y+= Math.sin(time*7)/3
-      lights[ 1 ].position.x-= Math.sin(time*7)/3
+      lights[ 1 ].position.z-= Math.sin(time*7)/3
       lights[ 1 ].position.y-= Math.sin(time*7)/3
-      lights[ 2 ].position.x+= Math.sin(time*7)/3
+      lights[ 2 ].position.z+= Math.sin(time*7)/3
       lights[ 2 ].position.y-= Math.sin(time*7)/3
 
 clones.forEach(function(lightsphereclone) {
@@ -371,14 +384,14 @@ clones.forEach(function(lightsphereclone) {
       // lights[0].visible = true;
       // lights[1].visible = true;
       // lights[2].visible = true;
-      lights[ 0 ].intensity = 20
-      lights[ 1 ].intensity = 20
-      lights[ 2 ].intensity = 20
+      lights[ 0 ].intensity = 10
+      lights[ 1 ].intensity = 10
+      lights[ 2 ].intensity = 10
 
       clones.forEach(function(lightsphereclone) {
-        lightsphereclone.children[0].intensity = 20
-        lightsphereclone.children[1].intensity = 20
-        lightsphereclone.children[2].intensity = 20
+        lightsphereclone.children[0].intensity = 10
+        lightsphereclone.children[1].intensity = 10
+        lightsphereclone.children[2].intensity = 10
       });
       // listener.setMasterVolume(1);
 
