@@ -390,6 +390,7 @@ container.appendChild( renderer.domElement );
               listener.setMasterVolume(0);
               controls.movementSpeed = 0;
               controls.lookSpeed = 0;
+              camera.lookAt(lightsphere);
               if(camera.position.z>200){
                 camera.position.z-=1
               }
