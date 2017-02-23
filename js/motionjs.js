@@ -131,7 +131,7 @@ container.appendChild( renderer.domElement );
   	points.push( new THREE.Vector2( Math.sin( i * 0.2 ) * 10 + 5, ( i - 5 ) * 2 ) );
   }
     var geometry = new THREE.SphereGeometry( 2.5, 32, 32 );
-    var Torgeometry = new THREE.TorusKnotGeometry( 10, 0.1, 100, 16 );
+    var Torgeometry = new THREE.TorusKnotGeometry( 10, 1, 100, 16 );
     var sphere = new THREE.OctahedronGeometry(1,0);;
 
 
