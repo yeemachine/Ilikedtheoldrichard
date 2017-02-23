@@ -227,7 +227,7 @@ container.appendChild( renderer.domElement );
         sound1.autoplay = true;
         sound1.setLoop(true);
         lightsphereclone.add(sound1);
-        lightsphereclone.scale.set( 5, 5, 5 );
+        // lightsphereclone.scale.set( 5, 5, 5 );
 
         clones.push(lightsphereclone);
 
@@ -259,7 +259,7 @@ container.appendChild( renderer.domElement );
         sound1.autoplay = true;
         sound1.setLoop(true);
         lightsphereclone.add(sound1);
-        lightsphereclone.scale.set( 10, 10, 10 );
+        // lightsphereclone.scale.set( 10, 10, 10 );
 
         clones.push(lightsphereclone);
 
@@ -291,7 +291,7 @@ container.appendChild( renderer.domElement );
         sound1.autoplay = true;
         sound1.setLoop(true);
         lightsphereclone.add(sound1);
-        lightsphereclone.scale.set( 20, 20, 20 );
+        // lightsphereclone.scale.set( 20, 20, 20 );
 
         clones.push(lightsphereclone);
 
