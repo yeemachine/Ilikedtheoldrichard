@@ -213,7 +213,7 @@ container.appendChild( renderer.domElement );
   // lightsphere.position.x = 50;
   var pivots = [];
   var clones = [];
-  for (var i = 0; i < 19; i++) {
+  for (var i = 0; i < 9; i++) {
     var lightsphereclone = lightsphere.clone();
     lightsphereclone.position.x = (Math.random() - 0.5) * 1000;
     lightsphereclone.position.y = (Math.random() - 0.5) * 1000;
@@ -222,7 +222,37 @@ container.appendChild( renderer.domElement );
     lightsphereclone.rotation.y = (Math.random() - 0.5) * 5;
     lightsphereclone.rotation.x = (Math.random() - 0.5) * 5;
     var sound1 = new THREE.PositionalAudio(listener);
-        sound1.load('../sounds/halp.ogg');
+        sound1.load('../sounds/bloop.ogg');
+        sound1.setRefDistance(20);
+        sound1.autoplay = true;
+        sound1.setLoop(true);
+        lightsphereclone.add(sound1);
+        clones.push(lightsphereclone);
+
+
+  var pivot = new THREE.Object3D();
+  pivot.add( lightsphereclone );
+  pivot.position.x = (Math.random() - 0.5) * 50;
+  pivot.position.y = (Math.random() - 0.5) * 50;
+  pivot.position.z = (Math.random() - 0.5) * 50;
+  pivot.rotation.z = (Math.random() - 0.5) * 5;
+  pivot.rotation.y = (Math.random() - 0.5) * 5;
+  pivot.rotation.x = (Math.random() - 0.5) * 5;
+  scene.add( pivot );
+  pivots.push(pivot);
+  scene.add( lightsphere );
+
+  }
+  for (var i = 0; i < 10; i++) {
+    var lightsphereclone = lightsphere.clone();
+    lightsphereclone.position.x = (Math.random() - 0.5) * 1000;
+    lightsphereclone.position.y = (Math.random() - 0.5) * 1000;
+    lightsphereclone.position.z = (Math.random() - 0.5) * 1000;
+    lightsphereclone.rotation.z = (Math.random() - 0.5) * 5;
+    lightsphereclone.rotation.y = (Math.random() - 0.5) * 5;
+    lightsphereclone.rotation.x = (Math.random() - 0.5) * 5;
+    var sound1 = new THREE.PositionalAudio(listener);
+        sound1.load('../sounds/shimakaze.ogg');
         sound1.setRefDistance(20);
         sound1.autoplay = true;
         sound1.setLoop(true);
@@ -249,7 +279,12 @@ container.appendChild( renderer.domElement );
   console.log(lightsphereclone.childobject)
 
 
-
+  var sound2 = new THREE.PositionalAudio(listener);
+      sound2.load('../sounds/Hiei2.ogg');
+      sound2.setRefDistance(20);
+      sound2.autoplay = true;
+      sound2.setLoop(true);
+      lightsphere.add(sound2);
   scene.add(lightsphere);
   generateMorphTargets( mesh, geometry );
   updateMorphs(mesh, material);
