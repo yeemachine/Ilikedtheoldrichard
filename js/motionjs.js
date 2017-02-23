@@ -27,7 +27,7 @@ $(document).ready(function() {
 $(".start").click(function() {
   $(".start").addClass("hide");
   $(".start").removeClass("start");
-  
+
   volumeTicker = 1;
 });
 
@@ -73,10 +73,20 @@ container.appendChild( renderer.domElement );
           wireframe: false,
           wireframeLinewidth: 2,
           wireframeLinejoin:'bevel',
-          transparent: true
+          transparent: true,
+          side: THREE.DoubleSide
           // emissive:'#ffffff'
         });
-
+        var Tormaterial = new THREE.MeshLambertMaterial({
+           map: THREE.ImageUtils.loadTexture('../img/daniil.png'),
+          // color: 0xffffff,
+          wireframe: false,
+          wireframeLinewidth: 2,
+          wireframeLinejoin:'bevel',
+          transparent: true,
+          side: THREE.DoubleSide
+          // emissive:'#ffffff'
+        });
 
         // var isMobile = window.matchMedia("only screen and (max-width: 760px)");
         //       if (isMobile.matches) {
@@ -116,10 +126,13 @@ container.appendChild( renderer.domElement );
   scene.add( ambientLight );
 
   var lightsphere = new THREE.Object3D();
-
-    var geometry = new THREE.IcosahedronGeometry( 10, 2 );
-    // var geometry = new THREE.TorusKnotGeometry( 10, 3, 100, 16 );
-    var sphere = new THREE.IcosahedronGeometry( 1, 2 );
+  var points = [];
+  for ( var i = 0; i < 10; i ++ ) {
+  	points.push( new THREE.Vector2( Math.sin( i * 0.2 ) * 10 + 5, ( i - 5 ) * 2 ) );
+  }
+    var geometry = new THREE.SphereGeometry( 2.5, 32, 32 );
+    var Torgeometry = new THREE.TorusKnotGeometry( 10, 0.1, 100, 16 );
+    var sphere = new THREE.OctahedronGeometry(1,0);;
 
 
 
@@ -155,8 +168,35 @@ container.appendChild( renderer.domElement );
   var mesh = new THREE.Mesh( geometry, material );
   mesh.position.x=0
 
-  lightsphere.add( mesh );
+  var Tor = new THREE.Mesh( Torgeometry, Tormaterial );
+  Tor.position.x=0
+  var Tor2 = new THREE.Mesh( Torgeometry, Tormaterial );
+  Tor2.position.x=0
 
+  Tor2.rotation.x=1
+  var Tor3 = new THREE.Mesh( Torgeometry, Tormaterial );
+  Tor3.position.x=0
+
+  Tor3.rotation.x=-1
+
+
+
+  // var heartShape = new THREE.Shape();
+  //
+  // heartShape.moveTo( 0, 20  );
+  // heartShape.moveTo(-20, -10  );
+  // heartShape.moveTo( 20, -10  );
+  //
+  //
+  // var heartgeometry = new THREE.ShapeGeometry( heartShape );
+  //
+  // var heart = new THREE.Mesh( heartgeometry, material ) ;
+
+
+  lightsphere.add( mesh );
+  lightsphere.add( Tor , Tor2, Tor3 );
+
+  console.log(lightsphere)
   //
   // lightsphere.position.x = 50;
   var pivots = [];
@@ -263,7 +303,14 @@ container.appendChild( renderer.domElement );
 
 
 
-
+          lightsphere.children[3].rotation.x += 0.01;
+          lightsphere.children[3].rotation.y += 0.01;
+          lightsphere.children[4].rotation.x += 0.01;
+          lightsphere.children[4].rotation.y += 0.01;
+          lightsphere.children[5].rotation.x +=0.01;
+          lightsphere.children[5].rotation.y +=0.01;
+          lightsphere.children[6].rotation.x += 0.01;
+          lightsphere.children[6].rotation.y += 0.01;
 
     pivots.forEach(function(pivot) {
       var random = Math.random()
@@ -274,6 +321,14 @@ container.appendChild( renderer.domElement );
       var random = Math.random()
       lightsphereclone.rotation.x += 0.05;
       lightsphereclone.rotation.y += 0.05;
+      lightsphereclone.children[3].rotation.x += random * 0.05;
+      lightsphereclone.children[3].rotation.y += random * 0.05;
+      lightsphereclone.children[4].rotation.x += random * 0.05;
+      lightsphereclone.children[4].rotation.y += random * 0.05;
+      lightsphereclone.children[5].rotation.x += random * 0.05;
+      lightsphereclone.children[5].rotation.y += random * 0.05;
+      lightsphereclone.children[6].rotation.x += random * 0.05;
+      lightsphereclone.children[6].rotation.y += random * 0.05;
     });
 
     // lightsphere.rotation.x += 0.01;
@@ -330,7 +385,7 @@ clones.forEach(function(lightsphereclone) {
     }
 
 
-    mesh.morphTargetInfluences[ 0 ] = ( 1 + Math.sin( 8 * time ) ) / 2;
+    mesh.morphTargetInfluences[ 0 ] = ( 1 + Math.sin( 2 * time ) ) / 2;
 
 
     renderer.context.getProgramInfoLog = function () { return '' };
