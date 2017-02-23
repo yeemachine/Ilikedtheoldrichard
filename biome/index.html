@@ -31,21 +31,20 @@
 		}
 		@keyframes opening {
 			0% {
-				color: rgba(25,25,55,.05);
-		  }
-			49%{
-				color: rgba(25,25,55,.05);
-
+				color: rgba(200,200,200,1);
 			}
-		  50% {
-				color: rgba(255,255,255,.05);
-		  }
+			49% {
+				color: rgba(200,200,200,1);
+			}
+			50% {
+				color: rgba(0,0,0,1);
+			}
 			99%{
-				color: rgba(255,255,255,.05);
+				color: rgba(0,0,0,1);
 
 			}
 			100% {
-			 color: rgba(25,25,55,.05);
+			 color: rgba(200,200,200,1);
 		 }
 
 		}
@@ -92,11 +91,14 @@
 
 }
 				.start {
-				  font-family: "Michroma", sans-serif;
+					font-family: -apple-system, BlinkMacSystemFont,
+       "Segoe UI", "Roboto", "Oxygen",
+       "Ubuntu", "Cantarell", "Fira Sans",
+       "Droid Sans", "Helvetica Neue", sans-serif;
 				  cursor: pointer;
 				  position: fixed;
 				  z-index: 1;
-				  background-color: transparent;
+				  background-color: rgba(255,255,255,0);
 				  top: 0;
 				  left: 0;
 				  width: 100%;
@@ -108,12 +110,13 @@
 				  justify-content: center;
 				  transition: 1s;
 				  -webkit-font-smoothing: auto;
-					animation: opening 40s infinite linear;
+					animation: blurbanim 20s infinite linear;
 					animation-fill-mode: forwards;
 
 			}
 			.hide {
-			  display: none;
+			  opacity:0;
+				pointer-events: none;
 			}
 			.blurbcontainer{
 				position: fixed;
@@ -121,7 +124,7 @@
 				left:0;
 				height:100vh;
 				z-index: -1;
-				width: 120%;
+				width: 100vw;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
@@ -131,17 +134,26 @@
 			}
 			.blurb{
 position: relative;
-width: 80%;
-margin-left: -17.5vw;
- font-size: calc(30px + 2.6vw);
+ font-size: calc(30px + 1vw);
  color: rgba(200,200,200,1);
- opacity: .05;
+ opacity: .2;
  overflow-wrap: break-word;
 word-wrap: break-word;
 font-family: 'yeehex';
 
 line-height: calc(22.5px + 2vw);
-/*animation: blurbanim 40s infinite linear;*/
+animation: blurbanim 20s infinite linear;
+/*-webkit-transform: skew(60deg,-30deg) scaley(.66667) !important;
+transform: skew(60deg,-30deg) scaley(.66667) !important;*/
+
+
+			}
+			#blurb{
+				/*transform: perspective(20em) rotateX(-80deg)*/
+
+			}
+			#blurb2{
+				transform: perspective(20em) rotateY(-180deg)
 
 			}
 		</style>
@@ -149,8 +161,9 @@ line-height: calc(22.5px + 2vw);
 	<body>
 
 		<div id='container' href='./material-browser.html' target='_blank'></div>
-		<div class="start">Hello</div>
-		<div class="blurbcontainer"><p class="blurb" id="blurb"></p></div>
+		<div class="start"><div class="blurbcontainer" style="justify-content:flex-end"><p class="blurb" id="blurb"></p></div></div>
+
+		<!-- <div class="blurbcontainer" style="align-items:flex-start"><p class="blurb" id="blurb2" style=""></p></div> -->
 
 		<script src="../build/three.js"></script>
 		<script src='../js/libs/dat.gui.min.js'></script>

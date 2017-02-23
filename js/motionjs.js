@@ -27,6 +27,7 @@ $(document).ready(function() {
 $(".start").click(function() {
   $(".start").addClass("hide");
   $(".start").removeClass("start");
+  
   volumeTicker = 1;
 });
 

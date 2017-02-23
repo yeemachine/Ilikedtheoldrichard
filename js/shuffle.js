@@ -113,8 +113,8 @@
 
 
 $(function() {
-  var message = $("#blurb"),
-    userText = $('#blurb');
+  var message = $(".blurb"),
+    userText = $('.blurb');
 
   // Shuffle the contents of container
   message.shuffleLetters();
@@ -136,7 +136,7 @@ $(function() {
 
 
 
-  var message = $("#blurb");
+  var message = $(".blurb");
 
   message.shuffleLetters();
 
@@ -148,9 +148,9 @@ $(function() {
     });
   }
 
-  var arr = ['2lhl2i3uhf874yg57127y70owriyuyuhjfh3oir7t5467t3uy4gk4hti5oytiq47g1uyh342kiuhglrw8ty743t5gyukjgrjhi437ytgkiuhg2lhl2i3uhf874yg57127y70owriyuyuhjfh3oir7t5467t3uy4gk4hti5oytiq47g1uyh342kiuhglrw8ty743t5gyukjgrjhi437ytgkiuhg2lhl2i3uhf874yg57127y70owriyuyuhjfh3oir7t5467t3uy4gk4hti5oytiq47g1uyh342kiuhglrw8ty743t5gyukjgrjhi437ytgkiuhg2lhl2i3uhf874yg57127y70owriyuyuhjfh3oir7t5467t3uy4gk4hti5oytiq47g1uyh342kiuhglrw8ty743t5gyukjgrjhi437ytgkiuhg2lhl2i3uhf874yg57127y70owriyuyuhjfh3oir7t5467t3uy4gk4hti5oytiq47g1uyh342kiuhglrw8ty743t5gyukjgrjhi437ytgkiuhg2lhl2i3uhf874yg57127y70owriyuyuhjfh3oir7t5467t3uy4gk4hti5oytiq47g1uyh342kiuhglrw8ty743t5gyukjgrjhi437ytgkiuhg2lhl2i3uhf874yg57127y70owriyuyuhjfh3oir7t5467t3uy4gk4hti5oytiq47g1uyh342kiuhglrw8ty743t5gyukjgrjhi437ytgkiuhg4587692o753459'];
+  var arr = ['WASD to move','Click to Begin'];
   var i = 0;
   var interval = setInterval(function() {
     shuffle(arr[i++ % arr.length]);
-  }, 2000);
+  }, 5000);
 });
