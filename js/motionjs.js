@@ -387,6 +387,7 @@ scene.add(skysphere)
   scene.add(lightsphere);
   generateMorphTargets( mesh, geometry );
   updateMorphs(mesh, material);
+  updateMorphs(sky, material);
 
 
   analyser1 = new THREE.AudioAnalyser(sound1, 32);
@@ -542,6 +543,7 @@ clones.forEach(function(lightsphereclone) {
 
     mesh.morphTargetInfluences[ 0 ] = ( 1 + Math.sin( 2 * time ) ) / 2;
 
+    sky.morphTargetInfluences[ 0 ] = ( 1 + Math.sin( 2 * time ) ) / 2;
 
     renderer.context.getProgramInfoLog = function () { return '' };
 
