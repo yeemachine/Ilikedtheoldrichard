@@ -449,7 +449,7 @@ scene.add(skysphere)
                 camera.position.x+=1
               }
               meshcontainer.lookAt(camera.position);
-              camera.lookAt(meshcontainer.position);
+              // camera.lookAt(meshcontainer.position);
 
               clones.forEach(function(lightsphereclone) {
               lightsphereclone.children[3].lookAt(camera.position);
