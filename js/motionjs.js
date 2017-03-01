@@ -424,7 +424,7 @@ scene.add(skysphere)
             listener.setMasterVolume(1);
               controls.movementSpeed = 100;
               controls.lookSpeed = .1;
-              lightsphere.children[3].rotation.y += Math.sin(time*5)/3;
+              lightsphere.children[3].rotation.y += Math.sin(time*3)/3;
               lightsphere.children[3].rotation.x += Math.sin(time*5)/3;
               clones.forEach(function(lightsphereclone) {
               lightsphereclone.children[3].rotation.y += Math.sin(time*Math.random()*5)/3;
