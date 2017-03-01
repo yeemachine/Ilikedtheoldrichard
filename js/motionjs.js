@@ -65,9 +65,9 @@ container.appendChild( renderer.domElement );
           camera.add(listener);
 
       // 	texture = new THREE.TextureLoader().load( "img/daniil.jpg" );
-
+        var texture = THREE.ImageUtils.loadTexture('../img/daniil.png')
         var material = new THREE.MeshLambertMaterial({
-           map: THREE.ImageUtils.loadTexture('../img/daniil.png'),
+           map: texture,
           morphTargets: true,
           // color: 0xffffff,
           wireframe: false,
@@ -78,12 +78,13 @@ container.appendChild( renderer.domElement );
           // emissive:'#ffffff'
         });
         var Tormaterial = new THREE.MeshLambertMaterial({
-           map: THREE.ImageUtils.loadTexture('../img/daniil.png'),
+           map: THREE.ImageUtils.loadTexture('../img/daniil2.png'),
           // color: 0xffffff,
           wireframe: false,
           wireframeLinewidth: 2,
           wireframeLinejoin:'bevel',
           transparent: true,
+          opacity: 0.2,
           side: THREE.DoubleSide
           // emissive:'#ffffff'
         });
@@ -147,10 +148,12 @@ container.appendChild( renderer.domElement );
 
 
 
-  light1.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor1} ) ) );
-  light2.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor2 } ) ) );
-  light3.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor3 } ) ) );
-
+  light1.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor1, transparent:true,opacity:.5} ) ) );
+  light2.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor2, transparent:true,opacity:.5 } ) ) );
+  light3.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor3, transparent:true,opacity:.5 } ) ) );
+  // light1.add( new THREE.Mesh( sphere, Tormaterial ));
+  // light2.add( new THREE.Mesh( sphere, Tormaterial ));
+  // light3.add( new THREE.Mesh( sphere, Tormaterial ));
 
   light1.position.set( 0, 20, 0 );
   light2.position.set( 0, -10 , -20 );
@@ -167,6 +170,12 @@ container.appendChild( renderer.domElement );
 
   var mesh = new THREE.Mesh( geometry, material );
   mesh.position.x=0
+  mesh.rotation.z= Math.PI/2
+  // mesh.rotation.y= Math.PI/2
+
+var meshcontainer = new THREE.Object3D();
+meshcontainer.add( mesh );
+
 
   var Tor = new THREE.Mesh( Torgeometry, Tormaterial );
   Tor.position.x=0
@@ -205,7 +214,7 @@ container.appendChild( renderer.domElement );
   // var heart = new THREE.Mesh( heartgeometry, material ) ;
 
 
-  lightsphere.add( mesh );
+  lightsphere.add( meshcontainer );
   lightsphere.add( Tor , Tor2, Tor3 );
 
   console.log(lightsphere)
@@ -328,9 +337,9 @@ container.appendChild( renderer.domElement );
 
   var pivot = new THREE.Object3D();
   pivot.add( lightsphereclone );
-  pivot.position.x = (Math.random() - 0.5) * 50;
-  pivot.position.y = (Math.random() - 0.5) * 50;
-  pivot.position.z = (Math.random() - 0.5) * 50;
+  pivot.position.x = (Math.random() - 0.5) * 20;
+  pivot.position.y = (Math.random() - 0.5) * 20;
+  pivot.position.z = (Math.random() - 0.5) * 20;
   pivot.rotation.z = (Math.random() - 0.5) * 5;
   pivot.rotation.y = (Math.random() - 0.5) * 5;
   pivot.rotation.x = (Math.random() - 0.5) * 5;
@@ -396,7 +405,6 @@ container.appendChild( renderer.domElement );
               listener.setMasterVolume(0);
               controls.movementSpeed = 0;
               controls.lookSpeed = 0;
-              // camera.lookAt(lightsphere);
               if(camera.position.z>200){
                 camera.position.z-=1
               }
@@ -410,12 +418,15 @@ container.appendChild( renderer.domElement );
                 camera.position.x+=1
               }
 
+
+
             }
           // }
 
+// var CameraVect  = THREE.Vector3(camera.position.x,camera.position.y,0)
 
 
-
+meshcontainer.lookAt(camera.position);
 
           lightsphere.children[3].rotation.x += 0.01;
           lightsphere.children[3].rotation.y += 0.01;
@@ -429,21 +440,23 @@ container.appendChild( renderer.domElement );
 
     pivots.forEach(function(pivot) {
       var random = Math.random()
-      pivot.rotation.x += 0.01;
-      pivot.rotation.y += 0.01;
+      pivot.rotation.x += 0.001;
+      pivot.rotation.y += 0.001;
     });
     clones.forEach(function(lightsphereclone) {
       var random = Math.random()
-      lightsphereclone.rotation.x += 0.05;
-      lightsphereclone.rotation.y += 0.05;
-      lightsphereclone.children[3].rotation.x += random * 0.05;
-      lightsphereclone.children[3].rotation.y += random * 0.05;
+      // lightsphereclone.rotation.x += 0.01;
+      // lightsphereclone.rotation.y += 0.01;
+      lightsphereclone.lookAt(camera.position);
+
       lightsphereclone.children[4].rotation.x += random * 0.05;
       lightsphereclone.children[4].rotation.y += random * 0.05;
       lightsphereclone.children[5].rotation.x += random * 0.05;
       lightsphereclone.children[5].rotation.y += random * 0.05;
       lightsphereclone.children[6].rotation.x += random * 0.05;
       lightsphereclone.children[6].rotation.y += random * 0.05;
+      lightsphereclone.children[7].rotation.x += random * 0.05;
+      lightsphereclone.children[7].rotation.y += random * 0.05;
     });
 
     // lightsphere.rotation.x += 0.01;
@@ -468,6 +481,7 @@ clones.forEach(function(lightsphereclone) {
       lights[ 0 ].intensity = 0
       lights[ 1 ].intensity = 0
       lights[ 2 ].intensity = 0
+      // lights[ 0 ].materials.opacity = 0
       clones.forEach(function(lightsphereclone) {
         lightsphereclone.children[0].intensity = 0
         lightsphereclone.children[1].intensity = 0
@@ -489,6 +503,7 @@ clones.forEach(function(lightsphereclone) {
       lights[ 0 ].intensity = 10
       lights[ 1 ].intensity = 10
       lights[ 2 ].intensity = 10
+      // lights[ 0 ].materials.opacity = 1
 
       clones.forEach(function(lightsphereclone) {
         lightsphereclone.children[0].intensity = 10
