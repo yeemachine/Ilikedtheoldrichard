@@ -435,7 +435,7 @@ scene.add(skysphere)
             if (volumeTicker === 0) {
               listener.setMasterVolume(0);
               controls.movementSpeed = 0;
-              // controls.lookSpeed = 0;
+              controls.lookSpeed = 0;
               if(camera.position.z>20){
                 camera.position.z-=1
               }
