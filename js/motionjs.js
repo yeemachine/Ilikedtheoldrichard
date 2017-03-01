@@ -52,7 +52,7 @@ container = document.getElementById('container');
   // scene.fog = new THREE.Fog(0x191937, 200, 500);
   scene.fog = new THREE.Fog(0x000000, 400, 1700);
 
-  camera.position.z = 500;
+  camera.position.z = 800;
 
   var renderer = new THREE.WebGLRenderer( { antialias: true, alpha:false} );
   renderer.setPixelRatio( window.devicePixelRatio );
@@ -500,7 +500,8 @@ clones.forEach(function(lightsphereclone) {
       lightsphereclone.children[2].position.x+= Math.sin(time*7)/3
       lightsphereclone.children[2].position.y-= Math.sin(time*7)/3
   });
-    if(randomnumber>.90){
+
+    if(randomnumber>.75){
 
       lights[ 0 ].intensity = 0
       lights[ 1 ].intensity = 0
