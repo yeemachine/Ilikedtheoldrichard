@@ -50,11 +50,11 @@ container = document.getElementById('container');
 
   scene.background = new THREE.Color( 0xff0000 );
   // scene.fog = new THREE.Fog(0x191937, 200, 500);
-  scene.fog = new THREE.Fog(0xffffff, 200, 500);
+  scene.fog = new THREE.Fog(0x000000, 400, 1700);
 
-  camera.position.z = 1000;
+  camera.position.z = 500;
 
-  var renderer = new THREE.WebGLRenderer( { antialias: true, alpha:true} );
+  var renderer = new THREE.WebGLRenderer( { antialias: true, alpha:false} );
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( window.innerWidth, window.innerHeight );
   renderer.setClearColor( 0x000000, 0 )
@@ -144,6 +144,7 @@ container.appendChild( renderer.domElement );
   light1 = new THREE.PointLight( lightcolor1, 10, 40,1 );
   light2 = new THREE.PointLight( lightcolor2, 10, 30,1 );
   light3 = new THREE.PointLight( lightcolor3, 10, 30,1);
+
   lights.push(light1, light2, light3);
 
 
@@ -151,6 +152,7 @@ container.appendChild( renderer.domElement );
   light1.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor1, transparent:true,opacity:.5} ) ) );
   light2.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor2, transparent:true,opacity:.5 } ) ) );
   light3.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor3, transparent:true,opacity:.5 } ) ) );
+
   // light1.add( new THREE.Mesh( sphere, Tormaterial ));
   // light2.add( new THREE.Mesh( sphere, Tormaterial ));
   // light3.add( new THREE.Mesh( sphere, Tormaterial ));
@@ -176,6 +178,28 @@ container.appendChild( renderer.domElement );
 var meshcontainer = new THREE.Object3D();
 meshcontainer.add( mesh );
 
+
+
+
+
+var sky = new THREE.Mesh( geometry, material );
+sky.position.x=0
+sky.rotation.z= Math.PI/2
+sky.rotation.y= -Math.PI/2
+skylight1 = new THREE.PointLight( lightcolor1, 10, 18000,1 );
+skylight2 = new THREE.PointLight( lightcolor2, 10, 18000,1 );
+skylight3 = new THREE.PointLight( lightcolor3, 10, 18000,1 );
+
+skylight1.position.set( 0, 15000, 0 );
+skylight2.position.set( -15000, -7500, 0 );
+skylight3.position.set( 15000, -7500,  0);
+
+scene.add(skylight1,skylight2,skylight3);
+var skysphere = new THREE.Object3D();
+skysphere.add(sky);
+
+skysphere.scale.set(500,500,500);
+scene.add(skysphere)
 
   var Tor = new THREE.Mesh( Torgeometry, Tormaterial );
   Tor.position.x=0
@@ -222,7 +246,7 @@ meshcontainer.add( mesh );
   // lightsphere.position.x = 50;
   var pivots = [];
   var clones = [];
-  for (var i = 0; i < 4; i++) {
+  for (var i = 0; i < 5; i++) {
     var lightsphereclone = lightsphere.clone();
     lightsphereclone.position.x = (Math.random() - 0.5) * 1000;
     lightsphereclone.position.y = (Math.random() - 0.5) * 1000;
@@ -254,7 +278,7 @@ meshcontainer.add( mesh );
   scene.add( lightsphere );
 
   }
-  for (var i = 0; i < 5; i++) {
+  for (var i = 0; i < 4; i++) {
     var lightsphereclone = lightsphere.clone();
     lightsphereclone.position.x = (Math.random() - 0.5) * 1000;
     lightsphereclone.position.y = (Math.random() - 0.5) * 1000;
@@ -286,7 +310,7 @@ meshcontainer.add( mesh );
   scene.add( lightsphere );
 
   }
-  for (var i = 0; i < 5; i++) {
+  for (var i = 0; i < 4; i++) {
     var lightsphereclone = lightsphere.clone();
     lightsphereclone.position.x = (Math.random() - 0.5) * 1000;
     lightsphereclone.position.y = (Math.random() - 0.5) * 1000;
@@ -318,7 +342,7 @@ meshcontainer.add( mesh );
   scene.add( lightsphere );
 
   }
-  for (var i = 0; i < 5; i++) {
+  for (var i = 0; i < 4; i++) {
     var lightsphereclone = lightsphere.clone();
     lightsphereclone.position.x = (Math.random() - 0.5) * 1000;
     lightsphereclone.position.y = (Math.random() - 0.5) * 1000;
@@ -476,7 +500,7 @@ clones.forEach(function(lightsphereclone) {
       lightsphereclone.children[2].position.x+= Math.sin(time*7)/3
       lightsphereclone.children[2].position.y-= Math.sin(time*7)/3
   });
-    if(randomnumber>.75){
+    if(randomnumber>.90){
 
       lights[ 0 ].intensity = 0
       lights[ 1 ].intensity = 0
