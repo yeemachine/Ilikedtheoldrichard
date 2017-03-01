@@ -149,9 +149,9 @@ container.appendChild( renderer.domElement );
 
 
 
-  light1.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor1, transparent:true,opacity:.5} ) ) );
-  light2.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor2, transparent:true,opacity:.5 } ) ) );
-  light3.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor3, transparent:true,opacity:.5 } ) ) );
+  light1.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor1, transparent:true,opacity:.2} ) ) );
+  light2.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor2, transparent:true,opacity:.2 } ) ) );
+  light3.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: lightcolor3, transparent:true,opacity:.2 } ) ) );
 
   // light1.add( new THREE.Mesh( sphere, Tormaterial ));
   // light2.add( new THREE.Mesh( sphere, Tormaterial ));
@@ -424,12 +424,18 @@ scene.add(skysphere)
             listener.setMasterVolume(1);
               controls.movementSpeed = 100;
               controls.lookSpeed = .1;
+              lightsphere.children[3].rotation.y += Math.sin(time*5)/3;
+              lightsphere.children[3].rotation.x += Math.sin(time*5)/3;
+              clones.forEach(function(lightsphereclone) {
+              lightsphereclone.children[3].rotation.y += Math.sin(time*Math.random()*5)/3;
+              lightsphereclone.children[3].rotation.x += Math.sin(time*Math.random()*5)/3;
+            });
 
             }
             if (volumeTicker === 0) {
               listener.setMasterVolume(0);
               controls.movementSpeed = 0;
-              controls.lookSpeed = 0;
+              // controls.lookSpeed = 0;
               if(camera.position.z>20){
                 camera.position.z-=1
               }
@@ -442,7 +448,13 @@ scene.add(skysphere)
               if(camera.position.x<-20){
                 camera.position.x+=1
               }
+              meshcontainer.lookAt(camera.position);
+              camera.lookAt(meshcontainer.position);
 
+              clones.forEach(function(lightsphereclone) {
+              lightsphereclone.children[3].lookAt(camera.position);
+              lightsphereclone.children[3].lookAt(camera.position);
+              });
 
 
             }
@@ -451,10 +463,9 @@ scene.add(skysphere)
 // var CameraVect  = THREE.Vector3(camera.position.x,camera.position.y,0)
 
 
-meshcontainer.lookAt(camera.position);
 
-          lightsphere.children[3].rotation.x += 0.01;
-          lightsphere.children[3].rotation.y += 0.01;
+          // lightsphere.children[3].rotation.x += 0.01;
+          // lightsphere.children[3].rotation.y += 0.01;
           lightsphere.children[4].rotation.x += 0.01;
           lightsphere.children[4].rotation.y += 0.01;
           lightsphere.children[5].rotation.x +=0.01;
@@ -462,6 +473,7 @@ meshcontainer.lookAt(camera.position);
           lightsphere.children[6].rotation.x += 0.01;
           lightsphere.children[6].rotation.y += 0.01;
           lightsphere.rotation.y = Math.PI/2;
+
 
     pivots.forEach(function(pivot) {
       var random = Math.random()
@@ -472,7 +484,6 @@ meshcontainer.lookAt(camera.position);
       var random = Math.random()
       // lightsphereclone.rotation.x += 0.01;
       // lightsphereclone.rotation.y += 0.01;
-      lightsphereclone.lookAt(camera.position);
 
       lightsphereclone.children[4].rotation.x += random * 0.05;
       lightsphereclone.children[4].rotation.y += random * 0.05;
