@@ -541,7 +541,7 @@ clones.forEach(function(lightsphereclone) {
     }
 
 
-    mesh.morphTargetInfluences[ 0 ] = ( 1 + Math.sin( 2 * time ) ) / 2;
+    mesh.morphTargetInfluences[ 0 ] = ( 1 + Math.sin( 8 * time ) ) / 2;
 
     sky.morphTargetInfluences[ 0 ] = ( 1 + Math.sin( 2 * time ) ) / 2;
 
