@@ -106,8 +106,8 @@ container.appendChild( renderer.domElement );
 
                 controls.movementSpeed = 100;
                 controls.lookSpeed = .1;
-                controls.noFly = true;
-                controls.lookVertical = false;
+                controls.noFly = false;
+                controls.lookVertical = true;
                 controls.lon = 270;
               // }
 
@@ -462,7 +462,7 @@ scene.add(skysphere)
           // set the velocity of the bullet
           bullet.velocity = new THREE.Vector3(
           -Math.sin(camera.rotation.y),
-          0,
+          Math.sin(camera.rotation.x),
           -Math.cos(camera.rotation.y)
           );
 
