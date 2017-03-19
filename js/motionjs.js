@@ -47,12 +47,18 @@ container = document.getElementById('container');
   var clock = new THREE.Clock();
   var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, .1, 2000000 );
   var analyser1
+  var keyboard = {};
+  var bulletcount = { canShoot:0 };
 
   scene.background = new THREE.Color( 0xff0000 );
   // scene.fog = new THREE.Fog(0x191937, 200, 500);
   scene.fog = new THREE.Fog(0x000000, 400, 1700);
 
   camera.position.z = 800;
+  var player = new THREE.Mesh();
+  	player.position.set(0,2,0);
+  	player.scale.set(10,10,10);
+  	scene.add(player);
 
   var renderer = new THREE.WebGLRenderer( { antialias: true, alpha:false} );
   renderer.setPixelRatio( window.devicePixelRatio );
@@ -120,7 +126,8 @@ container.appendChild( renderer.domElement );
   // 	controls.dynamicDampingFactor = 0;
 
 
-
+  // Bullets array
+  var bullets = [];
 
 
   var ambientLight = new THREE.AmbientLight( 0x404040 );
@@ -398,7 +405,7 @@ scene.add(skysphere)
 
     requestAnimationFrame( render );
     var delta = clock.getDelta();
-    var time = Date.now() * 0.001;
+    var time = Date.now() *  0.001;
 
     // var isMobile = window.matchMedia("only screen and (max-width: 760px)");
     //       if (isMobile.matches) {
@@ -420,6 +427,64 @@ scene.add(skysphere)
     //
     //       } else {
             controls.update(delta);
+            player.position.set(
+            		camera.position.x,
+            		camera.position.y,
+            		camera.position.z
+            	);
+            	player.rotation.set(
+            		camera.rotation.x,
+            		camera.rotation.y,
+            		camera.rotation.z
+            	);
+
+            for(var index=0; index<bullets.length; index+=1){
+            		if( bullets[index] === undefined ) continue;
+            		if( bullets[index].alive == false ){
+            			bullets.splice(index,1);
+            			continue;
+            		}
+
+            		bullets[index].position.add(bullets[index].velocity);
+            	}
+
+            if(keyboard[32] && bulletcount.canShoot <= 0){ //spacebar
+              var bullet = new THREE.Mesh(
+          new THREE.SphereGeometry(0.05,8,8),
+          new THREE.MeshBasicMaterial({color:0xffffff})
+          );
+          // position the bullet to come from the player's weapon
+          bullet.position.set(
+          camera.position.x,
+          camera.position.y,
+          camera.position.z
+          );
+          // set the velocity of the bullet
+          bullet.velocity = new THREE.Vector3(
+          -Math.sin(camera.rotation.y),
+          0,
+          -Math.cos(camera.rotation.y)
+          );
+
+          // after 1000ms, set alive to false and remove from scene
+          // setting alive to false flags our update code to remove
+          // the bullet from the bullets array
+          bullet.alive = true;
+          setTimeout(function(){
+          bullet.alive = false;
+          scene.remove(bullet);
+          }, 1000);
+
+          // add to scene, array, and set the delay to 10 frames
+          bullets.push(bullet);
+          scene.add(bullet);
+          bulletcount.canShoot = 10;
+
+          }
+          if(bulletcount.canShoot > 0) bulletcount.canShoot -= 1;
+
+
+
             if (volumeTicker === 1) {
             listener.setMasterVolume(1);
               controls.movementSpeed = 100;
@@ -458,6 +523,10 @@ scene.add(skysphere)
 
 
             }
+
+
+
+
           // }
 
 // var CameraVect  = THREE.Vector3(camera.position.x,camera.position.y,0)
@@ -562,6 +631,8 @@ clones.forEach(function(lightsphereclone) {
 
   };
 
+
+
   window.addEventListener( 'resize', function () {
 
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -570,6 +641,15 @@ clones.forEach(function(lightsphereclone) {
     renderer.setSize( window.innerWidth, window.innerHeight );
 
   }, false );
+  function keyDown(event){
+    keyboard[event.keyCode] = true;
+  }
 
+  function keyUp(event){
+    keyboard[event.keyCode] = false;
+  }
+
+  window.addEventListener('keydown', keyDown);
+  window.addEventListener('keyup', keyUp);
   render();
 });
