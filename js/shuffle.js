@@ -148,7 +148,7 @@ $(function() {
     });
   }
 
-  var arr = ['WASD to move','Click to Begin'];
+  var arr = ['WASD to move','Click to Begin','Spacebar to Shoot'];
   var i = 0;
   var interval = setInterval(function() {
     shuffle(arr[i++ % arr.length]);
