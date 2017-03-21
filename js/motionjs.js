@@ -473,7 +473,7 @@ scene.add(skysphere)
           setTimeout(function(){
           bullet.alive = false;
           scene.remove(bullet);
-          }, 1000);
+        }, 20000);
 
           // add to scene, array, and set the delay to 10 frames
           bullets.push(bullet);
