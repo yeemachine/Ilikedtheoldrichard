@@ -501,7 +501,7 @@ scene.add(skysphere)
               if( volumeTicker === 1 && bulletcount2.canShoot <= 0){
 
                   var bullet2 = new THREE.Mesh(
-                  new THREE.SphereGeometry(2,1,1),
+                  new THREE.SphereGeometry(5,1,1),
                   new THREE.MeshBasicMaterial({color:0xff0000})
                 );
               // position the bullet to come from the player's weapon
@@ -531,7 +531,7 @@ scene.add(skysphere)
 
             if(keyboard[32] && attackcount.canShoot <= 0){ //spacebar
               var attack = new THREE.Mesh(
-                new THREE.SphereGeometry(0.05,8,8),
+                new THREE.SphereGeometry(5,8,8),
                 new THREE.MeshBasicMaterial({color:0xffffff})
               );
           // position the bullet to come from the player's weapon
