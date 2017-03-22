@@ -49,6 +49,8 @@ container = document.getElementById('container');
   var analyser1
   var keyboard = {};
   var bulletcount = { canShoot:0 };
+  var bulletcount2 = { canShoot:0 };
+
   var attackcount = { canShoot:0 };
 
 
@@ -131,6 +133,8 @@ container.appendChild( renderer.domElement );
   // Bullets array
   var bullets = [];
   var attacks = [];
+  var bullets2 = [];
+
 
 
   var ambientLight = new THREE.AmbientLight( 0x404040 );
@@ -445,96 +449,123 @@ scene.add(skysphere)
             		if( bullets[index] === undefined ) continue;
             		if( bullets[index].alive == false ){
             			bullets.splice(index,1);
-            			continue;
-            		}
-
+            			continue;}
             		bullets[index].position.add(bullets[index].velocity);
             	}
+              for(var index=0; index<bullets2.length; index+=1){
+              		if( bullets2[index] === undefined ) continue;
+              		if( bullets2[index].alive == false ){
+              			bullets2.splice(index,1);
+              			continue;}
+              		bullets2[index].position.add(bullets2[index].velocity);
+              	}
 
               for(var index=0; index<attacks.length; index+=1){
                   if( attacks[index] === undefined ) continue;
                   if( attacks[index].alive == false ){
                     attacks.splice(index,1);
-                    continue;
-                  }
-
+                    continue;}
                   attacks[index].position.add(attacks[index].velocity);
                 }
 
               if( volumeTicker === 1 && bulletcount.canShoot <= 0){
                 clones.forEach(function(lightsphereclone) {
-
-                var bullet = new THREE.Mesh(
-            new THREE.SphereGeometry(2,1,1),
-            new THREE.MeshBasicMaterial({color:0xff0000})
-            );
+                  var bullet = new THREE.Mesh(
+                  new THREE.SphereGeometry(5,1,1),
+                  new THREE.MeshBasicMaterial({color:0xff0000})
+                );
             // position the bullet to come from the player's weapon
-            bullet.position.set(
-            lightsphereclone.position.x,
-            lightsphereclone.position.y,
-            lightsphereclone.position.z
-            );
+                  bullet.position.set(
+                    lightsphereclone.position.x,
+                    lightsphereclone.position.y,
+                    lightsphereclone.position.z
+                  );
             // set the velocity of the bullet
-            bullet.velocity = new THREE.Vector3(
-            -Math.sin(lightsphereclone.children[3].rotation.y),
-            Math.sin(lightsphereclone.children[3].rotation.x),
-            -Math.cos(lightsphereclone.children[3].rotation.y)
-            );
-
-            // after 1000ms, set alive to false and remove from scene
-            // setting alive to false flags our update code to remove
-            // the bullet from the bullets array
-            bullet.alive = true;
-            setTimeout(function(){
-            bullet.alive = false;
-            scene.remove(bullet);
-          }, 10000);
-
+                  bullet.velocity = new THREE.Vector3(
+                    -Math.sin(lightsphereclone.children[3].rotation.y),
+                    Math.sin(lightsphereclone.children[3].rotation.x),
+                    -Math.cos(lightsphereclone.children[3].rotation.y)
+                  );
+                  bullet.alive = true;
+                  setTimeout(function(){
+                    bullet.alive = false;
+                    scene.remove(bullet);
+                  }, 10000);
             // add to scene, array, and set the delay to 10 frames
-            bullets.push(bullet);
-            scene.add(bullet);
-            bulletcount.canShoot = 10;
-});
-            }
+                  bullets.push(bullet);
+                  scene.add(bullet);
+                  bulletcount.canShoot = 10;
+                });
+              }
 
+              if( volumeTicker === 1 && bulletcount2.canShoot <= 0){
+
+                  var bullet2 = new THREE.Mesh(
+                  new THREE.SphereGeometry(2,1,1),
+                  new THREE.MeshBasicMaterial({color:0xff0000})
+                );
+              // position the bullet to come from the player's weapon
+                  bullet2.position.set(
+                    lightsphere.children[3].position.x,
+                    lightsphere.children[3].position.y,
+                    lightsphere.children[3].position.z
+                  );
+              // set the velocity of the bullet
+                  bullet2.velocity = new THREE.Vector3(
+                    -Math.sin(lightsphere.children[3].rotation.y),
+                    Math.sin(lightsphere.children[3].rotation.x),
+                    -Math.cos(lightsphere.children[3].rotation.y)
+                  );
+                  bullet2.alive = true;
+                  setTimeout(function(){
+                    bullet2.alive = false;
+                    scene.remove(bullet2);
+                  }, 10000);
+              // add to scene, array, and set the delay to 10 frames
+                  bullets2.push(bullet2);
+                  scene.add(bullet2);
+                  bulletcount2.canShoot = 10;
+
+              }
 
 
             if(keyboard[32] && attackcount.canShoot <= 0){ //spacebar
               var attack = new THREE.Mesh(
-          new THREE.SphereGeometry(0.05,8,8),
-          new THREE.MeshBasicMaterial({color:0xffffff})
-          );
+                new THREE.SphereGeometry(0.05,8,8),
+                new THREE.MeshBasicMaterial({color:0xffffff})
+              );
           // position the bullet to come from the player's weapon
-          attack.position.set(
-          camera.position.x,
-          camera.position.y,
-          camera.position.z
-          );
+              attack.position.set(
+                camera.position.x,
+                camera.position.y,
+                camera.position.z
+              );
           // set the velocity of the bullet
-          attack.velocity = new THREE.Vector3(
-          -Math.sin(camera.rotation.y),
-          Math.sin(camera.rotation.x),
-          -Math.cos(camera.rotation.y)
-          );
+              attack.velocity = new THREE.Vector3(
+                -Math.sin(camera.rotation.y),
+                Math.sin(camera.rotation.x),
+                -Math.cos(camera.rotation.y)
+              );
 
           // after 1000ms, set alive to false and remove from scene
           // setting alive to false flags our update code to remove
           // the bullet from the bullets array
-          attack.alive = true;
-          setTimeout(function(){
-          attack.alive = false;
-          scene.remove(attack);
-        }, 20000);
+              attack.alive = true;
+              setTimeout(function(){
+                attack.alive = false;
+                scene.remove(attack);
+              }, 20000);
 
           // add to scene, array, and set the delay to 10 frames
-          attacks.push(attack);
-          scene.add(attack);
-          attackcount.canShoot = 10;
-
+              attacks.push(attack);
+              scene.add(attack);
+              attackcount.canShoot = 10;
           }
           if(attackcount.canShoot > 0) attackcount.canShoot -= 1;
 
           if(bulletcount.canShoot > 0) bulletcount.canShoot -= 1;
+          if(bulletcount2.canShoot > 0) bulletcount2.canShoot -= 1;
+
 
 
 
