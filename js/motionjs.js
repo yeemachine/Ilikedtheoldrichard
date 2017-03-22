@@ -49,6 +49,8 @@ container = document.getElementById('container');
   var analyser1
   var keyboard = {};
   var bulletcount = { canShoot:0 };
+  var attackcount = { canShoot:0 };
+
 
   scene.background = new THREE.Color( 0xff0000 );
   // scene.fog = new THREE.Fog(0x191937, 200, 500);
@@ -128,6 +130,7 @@ container.appendChild( renderer.domElement );
 
   // Bullets array
   var bullets = [];
+  var attacks = [];
 
 
   var ambientLight = new THREE.AmbientLight( 0x404040 );
@@ -302,7 +305,7 @@ scene.add(skysphere)
         // lightsphereclone.scale.set( 10, 10, 10 );
 
         clones.push(lightsphereclone);
-
+        console.log(clones);
 
   var pivot = new THREE.Object3D();
   pivot.add( lightsphereclone );
@@ -448,19 +451,67 @@ scene.add(skysphere)
             		bullets[index].position.add(bullets[index].velocity);
             	}
 
-            if(keyboard[32] && bulletcount.canShoot <= 0){ //spacebar
-              var bullet = new THREE.Mesh(
+              for(var index=0; index<attacks.length; index+=1){
+                  if( attacks[index] === undefined ) continue;
+                  if( attacks[index].alive == false ){
+                    attacks.splice(index,1);
+                    continue;
+                  }
+
+                  attacks[index].position.add(attacks[index].velocity);
+                }
+
+              if( volumeTicker === 1 && bulletcount.canShoot <= 0){
+                clones.forEach(function(lightsphereclone) {
+
+                var bullet = new THREE.Mesh(
+            new THREE.SphereGeometry(2,1,1),
+            new THREE.MeshBasicMaterial({color:0xff0000})
+            );
+            // position the bullet to come from the player's weapon
+            bullet.position.set(
+            lightsphereclone.position.x,
+            lightsphereclone.position.y,
+            lightsphereclone.position.z
+            );
+            // set the velocity of the bullet
+            bullet.velocity = new THREE.Vector3(
+            -Math.sin(lightsphereclone.children[3].rotation.y),
+            Math.sin(lightsphereclone.children[3].rotation.x),
+            -Math.cos(lightsphereclone.children[3].rotation.y)
+            );
+
+            // after 1000ms, set alive to false and remove from scene
+            // setting alive to false flags our update code to remove
+            // the bullet from the bullets array
+            bullet.alive = true;
+            setTimeout(function(){
+            bullet.alive = false;
+            scene.remove(bullet);
+          }, 10000);
+
+            // add to scene, array, and set the delay to 10 frames
+            bullets.push(bullet);
+            scene.add(bullet);
+            bulletcount.canShoot = 10;
+});
+            }
+
+
+
+            if(keyboard[32] && attackcount.canShoot <= 0){ //spacebar
+              var attack = new THREE.Mesh(
           new THREE.SphereGeometry(0.05,8,8),
           new THREE.MeshBasicMaterial({color:0xffffff})
           );
           // position the bullet to come from the player's weapon
-          bullet.position.set(
+          attack.position.set(
           camera.position.x,
           camera.position.y,
           camera.position.z
           );
           // set the velocity of the bullet
-          bullet.velocity = new THREE.Vector3(
+          attack.velocity = new THREE.Vector3(
           -Math.sin(camera.rotation.y),
           Math.sin(camera.rotation.x),
           -Math.cos(camera.rotation.y)
@@ -469,18 +520,20 @@ scene.add(skysphere)
           // after 1000ms, set alive to false and remove from scene
           // setting alive to false flags our update code to remove
           // the bullet from the bullets array
-          bullet.alive = true;
+          attack.alive = true;
           setTimeout(function(){
-          bullet.alive = false;
-          scene.remove(bullet);
+          attack.alive = false;
+          scene.remove(attack);
         }, 20000);
 
           // add to scene, array, and set the delay to 10 frames
-          bullets.push(bullet);
-          scene.add(bullet);
-          bulletcount.canShoot = 10;
+          attacks.push(attack);
+          scene.add(attack);
+          attackcount.canShoot = 10;
 
           }
+          if(attackcount.canShoot > 0) attackcount.canShoot -= 1;
+
           if(bulletcount.canShoot > 0) bulletcount.canShoot -= 1;
 
 
@@ -512,6 +565,12 @@ scene.add(skysphere)
               }
               if(camera.position.x<-20){
                 camera.position.x+=1
+              }
+              if(camera.position.y>0){
+                camera.position.y-=1
+              }
+              if(camera.position.y<0){
+                camera.position.y+=1
               }
               meshcontainer.lookAt(camera.position);
               // camera.lookAt(meshcontainer.position);
