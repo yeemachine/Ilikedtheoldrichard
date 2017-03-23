@@ -538,7 +538,7 @@ scene.add(skysphere)
               attack.position.set(
                 camera.position.x,
                 camera.position.y,
-                camera.position.z
+                camera.position.z-5
               );
           // set the velocity of the bullet
               attack.velocity = new THREE.Vector3(
